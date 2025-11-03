@@ -45,6 +45,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.18.2",
+    "friendly-challenge": "^0.9.14",
     "json2csv": "^5.0.7",
     "libphonenumber-js": "^1.12.25",
     "lucide-react": "^0.300.0",
@@ -60,7 +61,8 @@
     "tailwind-merge": "^2.6.0",
     "typescript": "^5.9.3",
     "xlsx": "^0.18.5",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
