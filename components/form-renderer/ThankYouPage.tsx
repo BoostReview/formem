@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import type { Form } from "@/types";
@@ -56,14 +56,16 @@ export function ThankYouPage({ form }: ThankYouPageProps) {
           </motion.div>
 
           {/* Titre sobre */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-          >
-            <h1 className="text-2xl font-semibold text-gray-900 mb-3">{thankYouTitle}</h1>
-            <p className="text-base text-gray-600">{thankYouText}</p>
-          </motion.div>
+          {((
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.25 }}
+            >
+              <h1 className="text-2xl font-semibold text-gray-900 mb-3">{thankYouTitle}</h1>
+              <p className="text-base text-gray-600">{thankYouText}</p>
+            </motion.div>
+          ) as ReactNode)}
 
           {/* Compte à rebours */}
           {redirectUrl && countdown !== null && countdown > 0 && (
