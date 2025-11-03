@@ -21,20 +21,23 @@ export function SingleChoiceBlock({ block, value, onChange }: SingleChoiceBlockP
         {block.required && <span className="text-red-500 ml-1.5 text-base">*</span>}
       </Label>
       <RadioGroup
-        value={selectedValue}
-        onValueChange={(val) => onChange(val)}
+        value={selectedValue || ""}
+        onValueChange={(val) => {
+          if (val) {
+            onChange(val);
+          }
+        }}
         className="space-y-3"
       >
         {options.map((option, index) => (
           <div
             key={index}
-            onClick={() => onChange(option)}
             className="flex items-center space-x-4 p-4 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 ring-2 ring-transparent hover:ring-gray-200 dark:hover:ring-slate-600 transition-colors duration-150 cursor-pointer group"
           >
-            <RadioGroupItem value={option} id={`${block.id}-${index}`} className="pointer-events-none" />
+            <RadioGroupItem value={option} id={`${block.id}-${index}`} />
             <Label
               htmlFor={`${block.id}-${index}`}
-              className="font-normal cursor-pointer flex-1 text-base text-gray-700 dark:text-slate-200 group-hover:text-gray-900 dark:group-hover:text-slate-100 pointer-events-none"
+              className="font-normal cursor-pointer flex-1 text-base text-gray-700 dark:text-slate-200 group-hover:text-gray-900 dark:group-hover:text-slate-100"
             >
               {option}
             </Label>
