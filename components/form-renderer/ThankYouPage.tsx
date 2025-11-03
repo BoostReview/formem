@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import type { Form } from "@/types";
 
@@ -38,22 +37,18 @@ export function ThankYouPage({ form }: ThankYouPageProps) {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      <div
         className="max-w-md w-full"
+        style={{ animation: 'fadeInUp 0.4s ease-out' }}
       >
         <div className="text-center space-y-6">
           {/* Icône de succès sobre */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 15 }}
+          <div
             className="mx-auto w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center"
+            style={{ animation: 'scaleIn 0.3s ease-out 0.15s both' }}
           >
             <Check className="w-8 h-8 text-gray-900" strokeWidth={2.5} />
-          </motion.div>
+          </div>
 
           {/* Titre sobre */}
           <div style={{ animation: 'fadeIn 0.5s ease-in 0.25s both' }}>
@@ -63,29 +58,25 @@ export function ThankYouPage({ form }: ThankYouPageProps) {
 
           {/* Compte à rebours */}
           {redirectUrl && countdown !== null && countdown > 0 && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
+            <p
               className="text-sm text-gray-500"
+              style={{ animation: 'fadeIn 0.5s ease-in 0.35s both' }}
             >
               Redirection dans {countdown} seconde{countdown > 1 ? "s" : ""}...
-            </motion.p>
+            </p>
           )}
 
           {/* Image optionnelle */}
           {settings.thankYouImage && (
-            <motion.img
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+            <img
               src={settings.thankYouImage as string}
               alt="Merci"
               className="mx-auto rounded-lg max-w-full mt-8"
+              style={{ animation: 'fadeIn 0.5s ease-in 0.4s both' }}
             />
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
