@@ -24,13 +24,13 @@ export function getFormStyle(theme: ThemeJSON): FormStyleConfig {
   const glowColor = theme.glowColor || theme.colors?.primary || "#3b82f6"
 
   // Styles de base
-  const baseStyles: React.CSSProperties = {
+  const baseStyles: React.CSSProperties & Record<string, string> = {
     "--primary-color": theme.colors?.primary || "#3b82f6",
     "--secondary-color": theme.colors?.secondary || "#64748b",
     "--text-color": theme.colors?.text || "#1e293b",
     "--radius": `${theme.radius || 14}px`,
     fontFamily: `"${theme.fonts?.family || "Inter"}", sans-serif`,
-  }
+  } as React.CSSProperties & Record<string, string>
 
   // Déterminer le style du background
   const isGradientBackground = backgroundGradient && backgroundGradient.includes("gradient")
