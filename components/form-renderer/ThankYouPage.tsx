@@ -56,14 +56,10 @@ export function ThankYouPage({ form }: ThankYouPageProps) {
           </motion.div>
 
           {/* Titre sobre */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-          >
+          <div style={{ animation: 'fadeIn 0.5s ease-in 0.25s both' }}>
             <h1 className="text-2xl font-semibold text-gray-900 mb-3">{thankYouTitle}</h1>
             <p className="text-base text-gray-600">{thankYouText}</p>
-          </motion.div>
+          </div>
 
           {/* Compte à rebours */}
           {redirectUrl && countdown !== null && countdown > 0 && (
