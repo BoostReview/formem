@@ -10,11 +10,16 @@ interface ThankYouPageProps {
 
 export function ThankYouPage({ form }: ThankYouPageProps) {
   const [countdown, setCountdown] = useState<number | null>(null);
-  const settings = form.settings_json || {};
-  const redirectUrl = settings.redirectUrl as string | undefined;
-  const thankYouTitle = (settings.thankYouTitle as string) || "Merci !";
-  const thankYouText =
-    (settings.thankYouText as string) ||
+  const settings = (form.settings_json || {}) as {
+    redirectUrl?: string;
+    thankYouTitle?: string;
+    thankYouText?: string;
+    thankYouImage?: string;
+  };
+  const redirectUrl = settings.redirectUrl;
+  const thankYouTitle: string = settings.thankYouTitle || "Merci !";
+  const thankYouText: string =
+    settings.thankYouText ||
     "Votre réponse a été enregistrée avec succès.";
 
   useEffect(() => {
@@ -69,7 +74,7 @@ export function ThankYouPage({ form }: ThankYouPageProps) {
           {/* Image optionnelle */}
           {settings.thankYouImage && (
             <img
-              src={settings.thankYouImage as string}
+              src={settings.thankYouImage}
               alt="Merci"
               className="mx-auto rounded-lg max-w-full mt-8"
               style={{ animation: 'fadeIn 0.5s ease-in 0.4s both' }}
