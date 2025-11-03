@@ -5,12 +5,9 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Wrapper pour Select Root avec suppressHydrationWarning
-const Select = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>
->(({ ...props }, ref) => (
-  <SelectPrimitive.Root ref={ref} suppressHydrationWarning {...props} />
-))
+const Select = (({ ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>) => (
+  <SelectPrimitive.Root suppressHydrationWarning {...props} />
+)) as typeof SelectPrimitive.Root
 Select.displayName = "Select"
 
 const SelectGroup = SelectPrimitive.Group
