@@ -10,7 +10,7 @@ const Select = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>
 >(({ ...props }, ref) => (
   <SelectPrimitive.Root ref={ref} suppressHydrationWarning {...props} />
-)) as typeof SelectPrimitive.Root
+))
 Select.displayName = "Select"
 
 const SelectGroup = SelectPrimitive.Group
