@@ -1,0 +1,34 @@
+"use client";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { FormBlock } from "@/types";
+
+interface NumberBlockProps {
+  block: FormBlock;
+  value?: unknown;
+  onChange: (value: unknown) => void;
+}
+
+export function NumberBlock({ block, value, onChange }: NumberBlockProps) {
+  return (
+    <div className="space-y-4">
+      <Label htmlFor={block.id} className="text-lg sm:text-xl font-medium block text-gray-900 dark:text-slate-100 leading-tight">
+        {block.label}
+        {block.required && <span className="text-red-500 ml-1.5 text-base">*</span>}
+      </Label>
+      <Input
+        id={block.id}
+        type="number"
+        placeholder={block.placeholder}
+        value={(value as number | string) || ""}
+        onChange={(e) => {
+          const numValue = e.target.value === "" ? "" : Number(e.target.value);
+          onChange(numValue);
+        }}
+        className="h-14 text-base text-gray-900 dark:text-slate-100 rounded-xl border-0 bg-gray-50 dark:bg-slate-800 px-4 ring-2 ring-transparent focus:ring-gray-900 dark:focus:ring-slate-300 focus:bg-white dark:focus:bg-slate-700 transition-all duration-200 placeholder:text-gray-400"
+      />
+    </div>
+  );
+}
+

@@ -1,0 +1,626 @@
+import { FormBlock, ThemeJSON, FormLayout } from "@/types"
+
+export interface FormTemplate {
+  id: string
+  name: string
+  description: string
+  layout: FormLayout
+  category: string
+  preview: string // Description visuelle
+  previewImage?: string // Chemin vers l'image de preview
+  schema: FormBlock[]
+  theme: ThemeJSON
+  icon?: string
+  style?: "minimal" | "gradient" | "glassmorphism" | "neon" | "elegant" | "modern" | "bold" | "soft"
+  backgroundStyle?: "solid" | "gradient" | "pattern" | "glass"
+}
+
+export const formTemplates: FormTemplate[] = [
+  // ==================== ONE-BY-ONE TEMPLATES ====================
+  {
+    id: "one-survey-classic",
+    name: "Sondage Classique",
+    description: "Design minimaliste avec animations douces",
+    layout: "one",
+    category: "Sondage",
+    preview: "Design épuré minimaliste avec animations fluides",
+    previewImage: "https://pub-d5f5fa5c86b54c3aba8810c57b646cee.r2.dev/Capture-d%E2%80%99%C3%A9cran-2025-11-03-021441.webp",
+    style: "minimal",
+    backgroundStyle: "solid",
+    schema: [
+      {
+        id: "welcome-1",
+        type: "welcome",
+        label: "Bienvenue dans notre sondage !",
+        required: false,
+      },
+      {
+        id: "heading-1",
+        type: "heading",
+        label: "Quel est votre niveau de satisfaction ?",
+        required: false,
+        level: "h2",
+      },
+      {
+        id: "single-choice-1",
+        type: "single-choice",
+        label: "Comment évaluez-vous notre service ?",
+        required: true,
+        options: ["Très satisfait", "Satisfait", "Neutre", "Insatisfait", "Très insatisfait"],
+      },
+      {
+        id: "heading-2",
+        type: "heading",
+        label: "Dites-nous en plus",
+        required: false,
+        level: "h3",
+      },
+      {
+        id: "textarea-1",
+        type: "textarea",
+        label: "Avez-vous des commentaires à nous partager ?",
+        placeholder: "Écrivez vos commentaires ici...",
+        required: false,
+      },
+      {
+        id: "email-1",
+        type: "email",
+        label: "Email (optionnel)",
+        placeholder: "votre@email.com",
+        required: false,
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#6366f1",
+        secondary: "#8b5cf6",
+        background: "#ffffff",
+        text: "#1e293b",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 12,
+      style: "minimal",
+      backgroundGradient: null,
+      cardStyle: "flat",
+      shadowIntensity: "light",
+    },
+  },
+  {
+    id: "one-contact-modern",
+    name: "Contact Moderne",
+    description: "Design avec dégradés vibrants et glassmorphism",
+    layout: "one",
+    category: "Contact",
+    preview: "Dégradés bleus/cyan avec effets glassmorphism",
+    previewImage: "https://pub-d5f5fa5c86b54c3aba8810c57b646cee.r2.dev/Capture-d%E2%80%99%C3%A9cran-2025-11-03-022539.webp",
+    style: "glassmorphism",
+    backgroundStyle: "gradient",
+    schema: [
+      {
+        id: "welcome-2",
+        type: "welcome",
+        label: "Prenez contact avec nous",
+        required: false,
+      },
+      {
+        id: "paragraph-1",
+        type: "paragraph",
+        label: "Nous serions ravis d'avoir de vos nouvelles !",
+        required: false,
+      },
+      {
+        id: "text-1",
+        type: "text",
+        label: "Votre nom",
+        placeholder: "Jean Dupont",
+        required: true,
+      },
+      {
+        id: "email-2",
+        type: "email",
+        label: "Votre email",
+        placeholder: "jean@exemple.com",
+        required: true,
+      },
+      {
+        id: "phone-1",
+        type: "phone",
+        label: "Téléphone (optionnel)",
+        placeholder: "+33 6 12 34 56 78",
+        required: false,
+      },
+      {
+        id: "textarea-2",
+        type: "textarea",
+        label: "Votre message",
+        placeholder: "Décrivez votre demande...",
+        required: true,
+      },
+      {
+        id: "consent-1",
+        type: "consent",
+        label: "J'accepte que mes données soient utilisées pour me recontacter",
+        required: true,
+        consentText: "J'accepte la politique de confidentialité",
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#3b82f6",
+        secondary: "#06b6d4",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        text: "#ffffff",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 20,
+      style: "glassmorphism",
+      backgroundGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      cardStyle: "glass",
+      shadowIntensity: "medium",
+      glassEffect: true,
+    },
+  },
+  {
+    id: "one-registration-premium",
+    name: "Inscription Premium",
+    description: "Design élégant avec ombres profondes et animations sophistiquées",
+    layout: "one",
+    category: "Inscription",
+    preview: "Ombres profondes, couleurs riches, animations élégantes",
+    previewImage: "https://pub-d5f5fa5c86b54c3aba8810c57b646cee.r2.dev/Capture-d%E2%80%99%C3%A9cran-2025-11-03-022858.webp",
+    style: "elegant",
+    backgroundStyle: "gradient",
+    schema: [
+      {
+        id: "welcome-3",
+        type: "welcome",
+        label: "Rejoignez-nous dès aujourd'hui",
+        required: false,
+      },
+      {
+        id: "text-2",
+        type: "text",
+        label: "Prénom",
+        placeholder: "Jean",
+        required: true,
+      },
+      {
+        id: "text-3",
+        type: "text",
+        label: "Nom",
+        placeholder: "Dupont",
+        required: true,
+      },
+      {
+        id: "email-3",
+        type: "email",
+        label: "Email",
+        placeholder: "jean@exemple.com",
+        required: true,
+      },
+      {
+        id: "date-1",
+        type: "date",
+        label: "Date de naissance",
+        required: false,
+        dateType: "date",
+      },
+      {
+        id: "single-choice-2",
+        type: "single-choice",
+        label: "Quel est votre plan ?",
+        required: true,
+        options: ["Gratuit", "Premium", "Entreprise"],
+      },
+      {
+        id: "consent-2",
+        type: "consent",
+        label: "J'accepte les conditions d'utilisation et la politique de confidentialité",
+        required: true,
+        consentText: "J'accepte les conditions",
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#8b5cf6",
+        secondary: "#ec4899",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+        text: "#ffffff",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 24,
+      style: "elegant",
+      backgroundGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+      cardStyle: "elevated",
+      shadowIntensity: "strong",
+      shadowColor: "rgba(139, 92, 246, 0.3)",
+    },
+  },
+  // ==================== ALL-IN-ONE TEMPLATES ====================
+  {
+    id: "page-contact-simple",
+    name: "Contact Simple",
+    description: "Design épuré minimaliste avec bordures subtiles",
+    layout: "page",
+    category: "Contact",
+    preview: "Minimaliste avec bordures fines et espacement généreux",
+    style: "minimal",
+    backgroundStyle: "solid",
+    schema: [
+      {
+        id: "heading-page-1",
+        type: "heading",
+        label: "Contactez-nous",
+        required: false,
+        level: "h1",
+      },
+      {
+        id: "paragraph-page-1",
+        type: "paragraph",
+        label: "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.",
+        required: false,
+      },
+      {
+        id: "text-page-1",
+        type: "text",
+        label: "Nom complet",
+        placeholder: "Jean Dupont",
+        required: true,
+      },
+      {
+        id: "email-page-1",
+        type: "email",
+        label: "Email",
+        placeholder: "jean@exemple.com",
+        required: true,
+      },
+      {
+        id: "phone-page-1",
+        type: "phone",
+        label: "Téléphone",
+        placeholder: "+33 6 12 34 56 78",
+        required: false,
+      },
+      {
+        id: "textarea-page-1",
+        type: "textarea",
+        label: "Message",
+        placeholder: "Votre message...",
+        required: true,
+      },
+      {
+        id: "consent-page-1",
+        type: "consent",
+        label: "J'accepte que mes données soient traitées conformément à la politique de confidentialité",
+        required: true,
+        consentText: "J'accepte",
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#2563eb",
+        secondary: "#64748b",
+        background: "#ffffff",
+        text: "#0f172a",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 8,
+      style: "minimal",
+      backgroundGradient: null,
+      cardStyle: "flat",
+      shadowIntensity: "none",
+      borderStyle: "subtle",
+    },
+  },
+  {
+    id: "page-survey-modern",
+    name: "Sondage Moderne",
+    description: "Design moderne avec sections colorées et ombres douces",
+    layout: "page",
+    category: "Sondage",
+    preview: "Sections avec couleurs dédiées et ombres élégantes",
+    style: "modern",
+    backgroundStyle: "solid",
+    schema: [
+      {
+        id: "heading-page-2",
+        type: "heading",
+        label: "Sondage de satisfaction",
+        required: false,
+        level: "h1",
+      },
+      {
+        id: "paragraph-page-2",
+        type: "paragraph",
+        label: "Merci de prendre quelques minutes pour répondre à ce questionnaire. Vos réponses nous aident à améliorer nos services.",
+        required: false,
+      },
+      {
+        id: "heading-page-3",
+        type: "heading",
+        label: "Informations personnelles",
+        required: false,
+        level: "h2",
+      },
+      {
+        id: "text-page-2",
+        type: "text",
+        label: "Nom",
+        placeholder: "Votre nom",
+        required: true,
+      },
+      {
+        id: "email-page-2",
+        type: "email",
+        label: "Email",
+        placeholder: "votre@email.com",
+        required: true,
+      },
+      {
+        id: "heading-page-4",
+        type: "heading",
+        label: "Questions",
+        required: false,
+        level: "h2",
+      },
+      {
+        id: "single-choice-page-1",
+        type: "single-choice",
+        label: "Comment avez-vous connu notre service ?",
+        required: true,
+        options: ["Réseaux sociaux", "Recommandation", "Recherche web", "Publicité", "Autre"],
+      },
+      {
+        id: "multiple-choice-page-1",
+        type: "multiple-choice",
+        label: "Quels aspects appréciez-vous ? (plusieurs choix possibles)",
+        required: false,
+        options: ["Design", "Fonctionnalités", "Rapidité", "Support", "Prix"],
+      },
+      {
+        id: "slider-page-1",
+        type: "slider",
+        label: "Notez votre expérience globale (1-10)",
+        required: true,
+        min: 1,
+        max: 10,
+        step: 1,
+      },
+      {
+        id: "textarea-page-2",
+        type: "textarea",
+        label: "Commentaires supplémentaires",
+        placeholder: "Partagez vos réflexions...",
+        required: false,
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#6366f1",
+        secondary: "#8b5cf6",
+        background: "#f8fafc",
+        text: "#1e293b",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 12,
+      style: "modern",
+      backgroundGradient: null,
+      cardStyle: "sectioned",
+      shadowIntensity: "medium",
+      sectionColors: true,
+    },
+  },
+  {
+    id: "page-registration-elegant",
+    name: "Inscription Élégante",
+    description: "Design sophistiqué avec dégradés subtils et typographie élégante",
+    layout: "page",
+    category: "Inscription",
+    preview: "Dégradés subtils violet/rose avec typographie soignée",
+    style: "elegant",
+    backgroundStyle: "gradient",
+    schema: [
+      {
+        id: "heading-page-5",
+        type: "heading",
+        label: "Créer votre compte",
+        required: false,
+        level: "h1",
+      },
+      {
+        id: "paragraph-page-3",
+        type: "paragraph",
+        label: "Remplissez les informations ci-dessous pour créer votre compte.",
+        required: false,
+      },
+      {
+        id: "text-page-3",
+        type: "text",
+        label: "Prénom",
+        placeholder: "Jean",
+        required: true,
+      },
+      {
+        id: "text-page-4",
+        type: "text",
+        label: "Nom",
+        placeholder: "Dupont",
+        required: true,
+      },
+      {
+        id: "email-page-3",
+        type: "email",
+        label: "Email",
+        placeholder: "jean@exemple.com",
+        required: true,
+      },
+      {
+        id: "phone-page-2",
+        type: "phone",
+        label: "Téléphone",
+        placeholder: "+33 6 12 34 56 78",
+        required: false,
+      },
+      {
+        id: "date-page-1",
+        type: "date",
+        label: "Date de naissance",
+        required: false,
+        dateType: "date",
+      },
+      {
+        id: "single-choice-page-2",
+        type: "single-choice",
+        label: "Plan souhaité",
+        required: true,
+        options: ["Gratuit", "Premium", "Entreprise"],
+      },
+      {
+        id: "consent-page-2",
+        type: "consent",
+        label: "J'accepte les conditions d'utilisation et la politique de confidentialité",
+        required: true,
+        consentText: "J'accepte",
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#8b5cf6",
+        secondary: "#ec4899",
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        text: "#1e293b",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 16,
+      style: "elegant",
+      backgroundGradient: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+      cardStyle: "elevated",
+      shadowIntensity: "medium",
+      elegantSpacing: true,
+    },
+  },
+  {
+    id: "page-event-registration",
+    name: "Inscription Événement",
+    description: "Design énergique avec couleurs vibrantes et effets dynamiques",
+    layout: "page",
+    category: "Événement",
+    preview: "Orange/rouge vibrant avec effets dynamiques",
+    style: "bold",
+    backgroundStyle: "gradient",
+    schema: [
+      {
+        id: "heading-page-6",
+        type: "heading",
+        label: "Inscription à l'événement",
+        required: false,
+        level: "h1",
+      },
+      {
+        id: "paragraph-page-4",
+        type: "paragraph",
+        label: "Rejoignez-nous pour cet événement exclusif ! Remplissez le formulaire pour vous inscrire.",
+        required: false,
+      },
+      {
+        id: "text-page-5",
+        type: "text",
+        label: "Nom complet",
+        placeholder: "Jean Dupont",
+        required: true,
+      },
+      {
+        id: "email-page-4",
+        type: "email",
+        label: "Email",
+        placeholder: "jean@exemple.com",
+        required: true,
+      },
+      {
+        id: "phone-page-3",
+        type: "phone",
+        label: "Téléphone",
+        placeholder: "+33 6 12 34 56 78",
+        required: true,
+      },
+      {
+        id: "single-choice-page-3",
+        type: "single-choice",
+        label: "Type de billet",
+        required: true,
+        options: ["Standard", "VIP", "Premium"],
+      },
+      {
+        id: "multiple-choice-page-2",
+        type: "multiple-choice",
+        label: "Intérêts (plusieurs choix possibles)",
+        required: false,
+        options: ["Networking", "Conférences", "Workshops", "Exposition", "Soirée"],
+      },
+      {
+        id: "textarea-page-3",
+        type: "textarea",
+        label: "Allergies ou restrictions alimentaires",
+        placeholder: "Aucune ou précisez...",
+        required: false,
+      },
+      {
+        id: "consent-page-3",
+        type: "consent",
+        label: "J'accepte les termes et conditions de l'événement",
+        required: true,
+        consentText: "J'accepte",
+      },
+    ],
+    theme: {
+      colors: {
+        primary: "#f59e0b",
+        secondary: "#ef4444",
+        background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+        text: "#1e293b",
+      },
+      fonts: {
+        family: "Inter",
+        size: "16px",
+      },
+      radius: 14,
+      style: "bold",
+      backgroundGradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+      cardStyle: "dynamic",
+      shadowIntensity: "strong",
+      boldAccents: true,
+      energeticAnimations: true,
+    },
+  },
+]
+
+export function getTemplateById(id: string): FormTemplate | undefined {
+  return formTemplates.find((t) => t.id === id)
+}
+
+export function getTemplatesByLayout(layout: FormLayout): FormTemplate[] {
+  return formTemplates.filter((t) => t.layout === layout)
+}
+
+export function getTemplatesByCategory(category: string): FormTemplate[] {
+  return formTemplates.filter((t) => t.category === category)
+}
+

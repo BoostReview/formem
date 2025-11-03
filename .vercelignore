@@ -1,0 +1,31 @@
+# Documentation et fichiers markdown
+*.md
+!README.md
+docs/
+prompt-*.md
+
+# Fichiers de développement
+.vscode/
+.idea/
+*.log
+
+# Tests et coverage
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+
+# Fichiers temporaires
+.DS_Store
+*.tmp
+*.temp
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Node modules déjà gérés par Vercel
+node_modules/
+
