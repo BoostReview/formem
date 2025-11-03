@@ -86,7 +86,7 @@ export function OneByOneRenderer({ form }: OneByOneRendererProps) {
       currentIndex < blocks.length - 1
     ) {
       setTimeout(() => {
-        goToNext();
+        goToNext(value);
       }, 250);
     }
   };
@@ -105,10 +105,11 @@ export function OneByOneRenderer({ form }: OneByOneRendererProps) {
     }
   }, [currentBlock, currentIndex]);
 
-  const goToNext = () => {
+  const goToNext = (newValue?: unknown) => {
     // Valider le bloc actuel s'il est obligatoire
     if (currentBlock && currentBlock.required) {
-      const answer = answers[currentBlock.id];
+      // Utiliser la nouvelle valeur si fournie, sinon lire depuis answers
+      const answer = newValue !== undefined ? newValue : answers[currentBlock.id];
       
       // Vérifier si la réponse est vide
       const isEmpty = 
