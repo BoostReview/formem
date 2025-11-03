@@ -31,17 +31,17 @@ export function ResponseStats({ responses, className }: ResponseStatsProps) {
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-4", className)}>
       <StatCard
-        title="Total des réponses"
+        label="Total des réponses"
         value={stats.total}
         description="Toutes les réponses"
       />
       <StatCard
-        title="Aujourd'hui"
+        label="Aujourd'hui"
         value={stats.today}
         description="Réponses reçues aujourd'hui"
       />
       <StatCard
-        title="Cette semaine"
+        label="Cette semaine"
         value={stats.thisWeek}
         description="Réponses des 7 derniers jours"
       />
