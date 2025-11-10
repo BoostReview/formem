@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { FormBlock } from "@/types";
+import { cn } from "@/lib/utils";
+import { getAlignment, alignmentClasses } from "@/lib/block-alignment";
 
 interface YouTubeBlockProps {
   block: FormBlock;
@@ -18,6 +20,7 @@ function extractYouTubeId(url: string): string | null {
 
 export function YouTubeBlock({ block }: YouTubeBlockProps) {
   const [videoId, setVideoId] = useState<string | null>(null);
+  const align = getAlignment(block as any)
 
   useEffect(() => {
     const url = (block.url as string) || block.label || "";
@@ -34,14 +37,20 @@ export function YouTubeBlock({ block }: YouTubeBlockProps) {
   }
 
   return (
-    <div className="w-full aspect-video rounded-[14px] overflow-hidden border-2 border-border shadow-md">
-      <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
-        title={block.label || "Vidéo YouTube"}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        className="w-full h-full"
-      />
+    <div className={cn(
+      "w-full",
+      align === "center" && "flex justify-center",
+      align === "right" && "flex justify-end"
+    )}>
+      <div className="w-full aspect-video rounded-[14px] overflow-hidden border-2 border-border shadow-md max-w-4xl">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title={block.label || "Vidéo YouTube"}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
     </div>
   );
 }

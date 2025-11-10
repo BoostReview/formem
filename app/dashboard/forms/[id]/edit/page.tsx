@@ -25,6 +25,8 @@ import {
   ToggleLeft,
   FileCheck,
   Youtube,
+  UtensilsCrossed,
+  Upload,
 } from "lucide-react"
 import { PropertyPanel } from "@/components/form-builder/PropertyPanel"
 import { PropertyPanelContent } from "@/components/form-builder/PropertyPanelContent"
@@ -439,6 +441,8 @@ export default function EditFormPage() {
             "yes-no": { label: "Oui/Non", description: "Toggle Oui/Non", icon: ToggleLeft },
             consent: { label: "Consentement", description: "Case de consentement", icon: FileCheck },
             youtube: { label: "Vidéo YouTube", description: "Vidéo intégrée", icon: Youtube },
+            file: { label: "Fichier", description: "Upload", icon: Upload },
+            "menu-restaurant": { label: "Menu Restaurant", description: "Menu modulable", icon: UtensilsCrossed },
           }
           
           const blockDef = blockDefinitions[draggingBlockType]

@@ -6,7 +6,7 @@ import { loadForm } from "@/app/actions/forms"
 import { getResponses, deleteResponses } from "@/app/actions/responses"
 import { ResponseStats } from "@/components/responses/ResponseStats"
 import { ResponseFilters } from "@/components/responses/ResponseFilters"
-import { ResponsesTable } from "@/components/responses/ResponsesTable"
+import { ResponsesTableMonday } from "@/components/responses/ResponsesTableMonday"
 import { ResponseDetailModal } from "@/components/responses/ResponseDetailModal"
 import { ExportButton } from "@/components/responses/ExportButton"
 import { Button } from "@/components/ui/button"
@@ -107,21 +107,38 @@ export default function ResponsesPage() {
     }
 
     try {
-      const result = await deleteResponses(selectedIds)
+      // Filtrer les IDs valides (UUIDs uniquement)
+      const validIds = selectedIds.filter((id) => {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        return uuidRegex.test(id)
+      })
+
+      if (validIds.length === 0) {
+        toast.error("Erreur", {
+          description: "Aucun ID valide à supprimer",
+        })
+        return
+      }
+
+      const result = await deleteResponses(validIds)
       if (result.success) {
         toast.success("Suppression réussie", {
-          description: `${selectedIds.length} réponse(s) supprimée(s)`,
+          description: `${validIds.length} réponse(s) supprimée(s)`,
         })
         setSelectedIds([])
-        loadData()
+        // Attendre un peu pour que la suppression soit bien persistée
+        await new Promise((resolve) => setTimeout(resolve, 300))
+        // Recharger les données
+        await loadData()
       } else {
         toast.error("Erreur", {
           description: result.error || "Impossible de supprimer les réponses",
         })
       }
     } catch (error) {
+      console.error("Erreur suppression:", error)
       toast.error("Erreur", {
-        description: "Une erreur est survenue",
+        description: "Une erreur est survenue lors de la suppression",
       })
     }
   }
@@ -215,7 +232,7 @@ export default function ResponsesPage() {
           description="Aucune réponse ne correspond à vos critères de recherche."
         />
       ) : (
-        <ResponsesTable
+        <ResponsesTableMonday
           responses={responses}
           form={form}
           onViewDetails={handleViewDetails}

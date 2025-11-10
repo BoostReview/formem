@@ -12,6 +12,8 @@ import { Response, Form } from "@/types"
 import { formatResponseDate, formatPhone, formatAnswers } from "@/lib/formatters/formatResponse"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { File, Download, Eye, Image as ImageIcon } from "lucide-react"
 
 interface ResponseDetailModalProps {
   response: Response | null
@@ -30,6 +32,140 @@ export function ResponseDetailModal({
 
   const schema = form.schema_json || []
   const formattedAnswers = formatAnswers(response.answers_json || {}, schema)
+
+  // Fonction pour déterminer le type de fichier
+  const getFileType = (fileName: string, fileType?: string): "image" | "pdf" | "other" => {
+    const lowerName = fileName.toLowerCase()
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp"]
+    const pdfExtensions = [".pdf"]
+    
+    if (imageExtensions.some(ext => lowerName.endsWith(ext)) || fileType?.startsWith("image/")) {
+      return "image"
+    }
+    if (pdfExtensions.some(ext => lowerName.endsWith(ext)) || fileType === "application/pdf") {
+      return "pdf"
+    }
+    return "other"
+  }
+
+  // Fonction pour rendre la valeur d'une réponse
+  const renderValue = (value: string, blockType: string) => {
+    // Pour le CAPTCHA, afficher un badge "Validé" au lieu du token
+    if (blockType === "captcha") {
+      return (
+        <div className="flex items-center gap-2">
+          <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+            ✓ Validé
+          </Badge>
+        </div>
+      )
+    }
+    
+    // Détecter si c'est un fichier
+    if (value.startsWith("FILE:")) {
+      try {
+        const fileData = JSON.parse(value.substring(5))
+        const fileUrl = fileData.fileUrl || fileData.fileName
+        const fileName = fileData.originalName || fileData.fileName || "Fichier"
+        const fileType = getFileType(fileName, fileData.type)
+        const isImage = fileType === "image"
+        const isPdf = fileType === "pdf"
+        
+        return (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
+                {isImage ? (
+                  <ImageIcon className="h-5 w-5 text-primary" />
+                ) : (
+                  <File className="h-5 w-5 text-primary" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{fileName}</p>
+                {fileData.size && (
+                  <p className="text-xs text-muted-foreground">
+                    {fileData.size < 1024
+                      ? `${fileData.size} B`
+                      : fileData.size < 1024 * 1024
+                      ? `${(fileData.size / 1024).toFixed(1)} KB`
+                      : `${(fileData.size / (1024 * 1024)).toFixed(1)} MB`}
+                  </p>
+                )}
+              </div>
+              {fileUrl && (
+                <div className="flex gap-2 flex-shrink-0">
+                  {(isImage || isPdf) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Voir
+                      </a>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                  >
+                    <a
+                      href={`${fileUrl}${fileUrl.includes('?') ? '&' : '?'}download=true`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Télécharger
+                    </a>
+                  </Button>
+                </div>
+              )}
+            </div>
+            
+            {/* Prévisualisation pour les images */}
+            {isImage && fileUrl && (
+              <div className="border rounded-lg overflow-hidden bg-muted/30">
+                <img
+                  src={fileUrl}
+                  alt={fileName}
+                  className="w-full h-auto max-h-96 object-contain"
+                  onError={(e) => {
+                    // Si l'image ne charge pas, cacher la prévisualisation
+                    e.currentTarget.style.display = "none"
+                  }}
+                />
+              </div>
+            )}
+            
+            {/* Prévisualisation pour les PDF */}
+            {isPdf && fileUrl && (
+              <div className="border rounded-lg overflow-hidden bg-muted/30">
+                <div className="w-full bg-white" style={{ height: "400px", minHeight: "400px" }}>
+                  <embed
+                    src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=1`}
+                    type="application/pdf"
+                    className="w-full h-full"
+                    style={{ minHeight: "400px" }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      } catch {
+        return <div className="text-base">{value}</div>
+      }
+    }
+    
+    return <div className="text-base">{value}</div>
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,10 +189,10 @@ export function ResponseDetailModal({
                     if (value === "-" || !value) return null
                     return (
                       <div key={block.id} className="border rounded-lg p-3">
-                        <div className="text-sm font-medium text-muted-foreground mb-1">
+                        <div className="text-sm font-medium text-muted-foreground mb-2">
                           {block.label || block.id}
                         </div>
-                        <div className="text-base">{value}</div>
+                        {renderValue(value, block.type)}
                       </div>
                     )
                   })

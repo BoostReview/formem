@@ -25,6 +25,12 @@ export function ElegantTemplate({
 }: ElegantTemplateProps) {
   const welcomeBlocks = blocks.filter((b) => b.type === "welcome")
   const formBlocks = blocks.filter((b) => b.type !== "welcome")
+  
+  // Vérifier si tous les blocs sont des blocs informatifs (menu-restaurant, heading, paragraph, etc.)
+  const hasOnlyInformationalBlocks = formBlocks.length > 0 && 
+    formBlocks.every(block => 
+      ["menu-restaurant", "heading", "paragraph", "youtube"].includes(block.type)
+    )
 
   return (
     <div 
@@ -49,8 +55,8 @@ export function ElegantTemplate({
         }}
       />
 
-      <div className="relative z-10 py-20 px-4">
-        <div className="max-w-3xl mx-auto space-y-12">
+      <div className="relative z-10 py-8 sm:py-20 px-3 sm:px-4">
+        <div className="max-w-3xl mx-auto space-y-6 sm:space-y-12">
           {/* Blocs welcome - Design élégant avec ombres profondes */}
           {welcomeBlocks.map((block, index) => (
             <motion.div
@@ -64,7 +70,7 @@ export function ElegantTemplate({
               }}
             >
               <div
-                className="bg-white rounded-3xl p-12 shadow-[0_20px_60px_rgba(139,92,246,0.15)] hover:shadow-[0_25px_70px_rgba(139,92,246,0.2)] transition-all duration-500 border border-purple-100/50"
+                className="bg-white rounded-xl sm:rounded-3xl p-6 sm:p-12 shadow-[0_20px_60px_rgba(139,92,246,0.15)] hover:shadow-[0_25px_70px_rgba(139,92,246,0.2)] transition-all duration-500 border border-purple-100/50"
               >
                 <div className="space-y-6">
                   {renderBlock(block, undefined, () => {})}
@@ -86,7 +92,7 @@ export function ElegantTemplate({
               }}
             >
               <div
-                className="bg-white rounded-3xl p-10 shadow-[0_15px_50px_rgba(139,92,246,0.12)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.18)] hover:scale-[1.01] transition-all duration-500 border border-purple-100/50"
+                className="bg-white rounded-xl sm:rounded-3xl p-5 sm:p-10 shadow-[0_15px_50px_rgba(139,92,246,0.12)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.18)] hover:scale-[1.01] transition-all duration-500 border border-purple-100/50"
               >
                 <div className="space-y-6">
                   {renderBlock(block, answers[block.id], onAnswer)}
@@ -96,6 +102,7 @@ export function ElegantTemplate({
           ))}
 
           {/* Bouton - Style élégant avec dégradé */}
+          {!hasOnlyInformationalBlocks && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -111,9 +118,11 @@ export function ElegantTemplate({
               {isSubmitting ? "Envoi en cours..." : "Envoyer avec élégance"}
             </Button>
           </motion.div>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 

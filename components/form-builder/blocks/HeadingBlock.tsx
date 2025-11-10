@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { FormBlock } from "@/types"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
 interface HeadingBlockProps {
@@ -15,74 +16,52 @@ export function HeadingBlock({
   isEditing = false,
   onUpdate,
 }: HeadingBlockProps) {
-  const [isLocalEditing, setIsLocalEditing] = React.useState(false)
-  const [label, setLabel] = React.useState(block.label || "")
   const level = (block.level as "h1" | "h2" | "h3") || "h2"
   const align = (block.align as "left" | "center" | "right") || "left"
-
-  React.useEffect(() => {
-    setLabel(block.label || "")
-  }, [block.label])
-
-  const handleDoubleClick = () => {
-    if (!isEditing) return
-    setIsLocalEditing(true)
-  }
-
-  const handleBlur = () => {
-    setIsLocalEditing(false)
-    if (label !== block.label) {
-      onUpdate?.(label)
-    }
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleBlur()
-    }
-    if (e.key === "Escape") {
-      setLabel(block.label || "")
-      setIsLocalEditing(false)
-    }
-  }
-
   const HeadingTag = level
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate?.(e.target.value)
+  }
+
+  const alignmentClasses = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+  }
+
   return (
-    <div
-      className={cn(
-        "w-full",
-        align === "center" && "text-center",
-        align === "right" && "text-right"
-      )}
-    >
-      {isLocalEditing ? (
-        <input
+    <div className="w-full">
+      {isEditing ? (
+        <Input
           type="text"
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          className="w-full bg-transparent border-none outline-none text-2xl font-bold focus:ring-2 focus:ring-primary rounded px-2 py-1"
-          autoFocus
+          value={block.label || ""}
+          onChange={handleChange}
+          placeholder="Titre"
+          className={cn(
+            "bg-transparent border border-dashed border-muted-foreground/40 font-bold block",
+            level === "h1" && "text-3xl h-auto py-3",
+            level === "h2" && "text-2xl h-auto py-2",
+            level === "h3" && "text-xl h-auto py-2",
+            alignmentClasses[align]
+          )}
         />
       ) : (
         <HeadingTag
           className={cn(
-            "font-bold text-foreground",
+            "font-bold text-foreground block",
             level === "h1" && "text-3xl",
             level === "h2" && "text-2xl",
-            level === "h3" && "text-xl"
+            level === "h3" && "text-xl",
+            alignmentClasses[align]
           )}
-          onDoubleClick={handleDoubleClick}
-          style={{ cursor: isEditing ? "text" : "default" }}
         >
-          {label || "Titre"}
+          {block.label || "Titre"}
         </HeadingTag>
       )}
     </div>
   )
 }
+
 
 

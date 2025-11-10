@@ -70,3 +70,6 @@ Le projet est prêt pour :
 - Les variables d'environnement Supabase doivent être configurées dans `.env`
 
 
+
+
+

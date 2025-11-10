@@ -302,3 +302,6 @@ Avant de déployer en production :
 
 Si vous avez des questions, consultez la [documentation officielle](https://docs.friendlycaptcha.com) ou ouvrez une issue sur GitHub.
 
+
+
+

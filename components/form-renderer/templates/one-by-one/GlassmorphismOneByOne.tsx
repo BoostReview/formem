@@ -54,6 +54,8 @@ export function GlassmorphismOneByOne({
     }
   }
 
+  const isMenuRestaurant = currentBlock?.type === "menu-restaurant"
+
   return (
     <div 
       className="min-h-screen flex flex-col relative overflow-hidden"
@@ -103,6 +105,7 @@ export function GlassmorphismOneByOne({
       </div>
 
       {/* Barre de progression glassmorphism douce */}
+      {!isMenuRestaurant && (
       <div className="relative z-10 backdrop-blur-2xl bg-white/40 border-b border-white/60 px-8 py-5">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between text-xs font-semibold text-gray-700 mb-3 tracking-wide">
@@ -123,6 +126,7 @@ export function GlassmorphismOneByOne({
           </div>
         </div>
       </div>
+      )}
 
       {/* Contenu centré glassmorphism */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
@@ -173,8 +177,8 @@ export function GlassmorphismOneByOne({
       </div>
 
       {/* Navigation glassmorphism */}
-      {currentBlock && !isInWelcomePhase && (
-        <div className="relative z-10 backdrop-blur-2xl bg-white/40 border-t border-white/60 px-8 py-7">
+      {currentBlock && !isInWelcomePhase && !isMenuRestaurant && (
+        <div className="relative z-10 backdrop-blur-2xl bg-white/40 border-t border-white/60 px-8 py-7 pb-12">
           <div className="max-w-3xl mx-auto">
             {error && (
               <motion.div
@@ -200,7 +204,14 @@ export function GlassmorphismOneByOne({
               )}
               {showNextButton && (
                 <Button
-                  onClick={currentIndex === totalBlocks - 1 ? onSubmit : onNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentIndex === totalBlocks - 1) {
+                      onSubmit();
+                    } else {
+                      onNext();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="backdrop-blur-xl bg-white/60 border border-white/80 text-gray-800 hover:bg-white/70 disabled:opacity-50 h-11 px-8 rounded-xl font-medium text-base shadow-lg shadow-gray-900/10 transition-all duration-200"
                 >

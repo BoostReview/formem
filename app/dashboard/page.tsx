@@ -1,4 +1,4 @@
-import { DashboardPageClient } from "./DashboardPageClient"
+import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient"
 import { getForms } from "@/app/actions/forms"
 import { getStats } from "@/app/actions/stats"
 

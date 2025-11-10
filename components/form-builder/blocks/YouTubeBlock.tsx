@@ -4,6 +4,8 @@ import * as React from "react"
 import { FormBlock } from "@/types"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { getAlignment, alignmentClasses } from "@/lib/block-alignment"
 
 interface YouTubeBlockProps {
   block: FormBlock
@@ -13,6 +15,7 @@ interface YouTubeBlockProps {
 
 export function YouTubeBlock({ block, isEditing = false, onUpdate }: YouTubeBlockProps) {
   const url = (block.url as string) || ""
+  const align = getAlignment(block as any)
 
   const getYouTubeEmbedUrl = (url: string) => {
     if (!url) return null
@@ -29,7 +32,10 @@ export function YouTubeBlock({ block, isEditing = false, onUpdate }: YouTubeBloc
 
   return (
     <div className="w-full space-y-2">
-      <Label className="text-base font-medium">
+      <Label className={cn(
+        "text-base font-medium block",
+        alignmentClasses[align]
+      )}>
         {block.label || "Vidéo YouTube"}
       </Label>
       {isEditing ? (
@@ -57,5 +63,7 @@ export function YouTubeBlock({ block, isEditing = false, onUpdate }: YouTubeBloc
     </div>
   )
 }
+
+
 
 

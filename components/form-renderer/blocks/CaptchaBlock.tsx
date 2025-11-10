@@ -1,10 +1,21 @@
 "use client";
 
-import { useEffect, useId } from "react";
+import * as React from "react";
 import { Label } from "@/components/ui/label";
-import { Shield, CheckCircle, AlertCircle } from "lucide-react";
+import { Shield } from "lucide-react";
 import type { FormBlock } from "@/types";
-import { useFriendlyCaptcha } from "@/hooks/useFriendlyCaptcha";
+import { cn } from "@/lib/utils";
+import { getAlignment, alignmentClasses } from "@/lib/block-alignment";
+import { loadAltcha } from "@/lib/altcha-loader";
+
+// Importer Altcha directement
+if (typeof window !== "undefined") {
+  import("altcha").catch(() => {
+    // Ignorer les erreurs d'import, on utilisera le CDN en fallback
+  });
+}
+
+// Le web component Altcha sera créé dynamiquement
 
 interface CaptchaBlockProps {
   block: FormBlock;
@@ -12,107 +23,221 @@ interface CaptchaBlockProps {
   onChange: (value: unknown) => void;
 }
 
-// Clé site Friendly CAPTCHA (à configurer dans les variables d'environnement)
-const FRIENDLY_CAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_FRIENDLY_CAPTCHA_SITE_KEY || "";
-
 export function CaptchaBlock({ block, value, onChange }: CaptchaBlockProps) {
-  const widgetId = useId();
-  const containerId = `frc-captcha-${widgetId}`;
-  const { solution, isReady, error } = useFriendlyCaptcha(
-    FRIENDLY_CAPTCHA_SITE_KEY || null,
-    containerId
-  );
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLElement | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const align = getAlignment(block as any);
+  // Utiliser l'URL du challenge configurée ou l'endpoint par défaut (URL absolue)
+  const defaultChallengeUrl = typeof window !== "undefined" 
+    ? `${window.location.origin}/api/altcha/challenge`
+    : "/api/altcha/challenge";
+  const challengeUrl = (block.challengeUrl as string) || defaultChallengeUrl;
 
-  // Mettre à jour la valeur quand la solution est prête
-  useEffect(() => {
-    if (solution && solution !== value) {
-      onChange(solution);
-    }
-  }, [solution, value, onChange]);
+  // Charger le script Altcha et créer le widget
+  React.useEffect(() => {
+    if (typeof window === "undefined" || !containerRef.current) return;
 
-  // Si pas de clé configurée
-  if (!FRIENDLY_CAPTCHA_SITE_KEY) {
-    return (
-      <div className="space-y-4">
-        <Label className="text-lg sm:text-xl font-medium block text-gray-900 dark:text-slate-100 leading-tight flex items-center gap-2">
-          <Shield className="h-5 w-5" />
-          {block.label || "Vérification de sécurité"}
-          <span className="text-red-500 ml-1.5 text-base">*</span>
-        </Label>
-        <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                Configuration Friendly CAPTCHA requise
-              </p>
-              <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                Ajoutez NEXT_PUBLIC_FRIENDLY_CAPTCHA_SITE_KEY dans vos variables d'environnement
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    const container = containerRef.current;
+    let isMounted = true;
+    
+    // Nettoyer les widgets existants avant de créer un nouveau
+    const existingWidgets = container.querySelectorAll("altcha-widget");
+    existingWidgets.forEach((widget) => {
+      widget.remove();
+    });
+
+    const initializeAltcha = async () => {
+      try {
+        // Vérifier à nouveau si le composant est toujours monté
+        if (!isMounted || !containerRef.current) {
+          console.log("[CaptchaBlock] Component not mounted or container missing");
+          return;
+        }
+
+        console.log("[CaptchaBlock] Starting Altcha initialization...");
+        setIsLoading(true);
+        setError(null);
+        
+        // Charger Altcha
+        const loaded = await loadAltcha();
+        console.log("[CaptchaBlock] loadAltcha returned:", loaded);
+        
+        if (!loaded) {
+          console.error("[CaptchaBlock] Impossible de charger Altcha");
+          setIsLoading(false);
+          setError("Impossible de charger le widget de vérification. Veuillez rafraîchir la page.");
+          return;
+        }
+
+        if (!isMounted || !containerRef.current) {
+          console.log("[CaptchaBlock] Component unmounted during load");
+          return;
+        }
+
+        // Vérifier une dernière fois avant de créer le widget
+        if (containerRef.current.querySelector("altcha-widget")) {
+          console.log("[CaptchaBlock] Widget already exists");
+          return;
+        }
+
+        console.log("[CaptchaBlock] Creating altcha-widget element...");
+        
+        // Créer le widget
+        const widget = document.createElement("altcha-widget") as any;
+        
+        if (challengeUrl) {
+          widget.setAttribute("challengeurl", challengeUrl);
+          console.log("[CaptchaBlock] Challenge URL:", challengeUrl);
+        }
+        widget.setAttribute("hidelogo", "true");
+        widget.setAttribute("hidefooter", "true"); // Masquer le footer pour éviter la duplication
+        widget.setAttribute("auto", "onfocus");
+        
+        // Utiliser le label du bloc si fourni, sinon utiliser le texte par défaut
+        const widgetLabel = block.label || "Je ne suis pas un robot";
+        
+        const strings = {
+          label: widgetLabel, // Label pour la checkbox
+          error: "La vérification a échoué, merci de réessayer.",
+          footer: "", // Pas de footer, masqué avec hidefooter
+          verified: "Vérifié !",
+          verifying: "En cours de vérification...",
+          waitAlert: "Merci de patienter...",
+        };
+        widget.setAttribute("strings", JSON.stringify(strings));
+        
+        widget.style.width = "100%";
+        widget.style.maxWidth = "400px";
+
+        // Écouter les événements
+        const handleStateChange = (event: Event) => {
+          if (!isMounted) return;
+          const customEvent = event as CustomEvent<{ state: string; payload?: string }>;
+          console.log("[CaptchaBlock] State change:", customEvent.detail?.state, "payload:", customEvent.detail?.payload);
+          if (customEvent.detail?.state === "verified" && customEvent.detail?.payload) {
+            const payload = customEvent.detail.payload;
+            console.log("[CaptchaBlock] Calling onChange with payload:", payload, "type:", typeof payload, "length:", payload.length);
+            // S'assurer que la valeur est bien une string non vide
+            if (payload && typeof payload === "string" && payload.trim().length > 0) {
+              onChange(payload);
+            } else {
+              console.warn("[CaptchaBlock] Invalid payload, not calling onChange:", payload);
+            }
+          } else if (customEvent.detail?.state === "error" || customEvent.detail?.state === "expired") {
+            console.log("[CaptchaBlock] Error or expired, calling onChange(null)");
+            onChange(null);
+          }
+        };
+
+        const handleVerified = (event: Event) => {
+          if (!isMounted) return;
+          const customEvent = event as CustomEvent<{ payload: string }>;
+          const payload = customEvent.detail?.payload;
+          console.log("[CaptchaBlock] Verified event:", payload, "type:", typeof payload);
+          if (payload && typeof payload === "string" && payload.trim().length > 0) {
+            console.log("[CaptchaBlock] Calling onChange with verified payload:", payload, "length:", payload.length);
+            onChange(payload);
+          } else {
+            console.warn("[CaptchaBlock] Invalid verified payload, not calling onChange:", payload);
+          }
+        };
+
+        widget.addEventListener("statechange", handleStateChange);
+        widget.addEventListener("verified", handleVerified);
+
+        // Exposer une méthode pour récupérer la valeur vérifiée directement
+        (widget as any).getVerifiedValue = () => {
+          try {
+            // Essayer de récupérer la valeur depuis le widget Altcha
+            const widgetElement = widget as any;
+            if (widgetElement.getPayload) {
+              return widgetElement.getPayload();
+            }
+            // Sinon, vérifier l'état
+            if (widgetElement.getState && widgetElement.getState() === "verified") {
+              // Essayer de récupérer depuis l'attribut name (champ caché)
+              const hiddenInput = document.querySelector(`input[name="altcha"]`) as HTMLInputElement;
+              if (hiddenInput && hiddenInput.value) {
+                return hiddenInput.value;
+              }
+            }
+            return null;
+          } catch (error) {
+            console.warn("[CaptchaBlock] Error getting verified value:", error);
+            return null;
+          }
+        };
+
+        if (containerRef.current && isMounted) {
+          console.log("[CaptchaBlock] Appending widget to container");
+          containerRef.current.appendChild(widget);
+          widgetRef.current = widget;
+          setIsLoading(false);
+          console.log("[CaptchaBlock] Widget appended successfully");
+        } else {
+          console.warn("[CaptchaBlock] Cannot append widget - container or mounted state invalid");
+          setIsLoading(false);
+          setError("Erreur lors de l'ajout du widget");
+        }
+      } catch (error) {
+        console.error("[CaptchaBlock] Erreur lors du chargement d'Altcha:", error);
+        setIsLoading(false);
+        setError(error instanceof Error ? error.message : "Erreur inconnue");
+      }
+    };
+
+    initializeAltcha();
+
+    return () => {
+      isMounted = false;
+      if (widgetRef.current && widgetRef.current.parentNode) {
+        widgetRef.current.removeEventListener("statechange", () => {});
+        widgetRef.current.removeEventListener("verified", () => {});
+        widgetRef.current.parentNode.removeChild(widgetRef.current);
+        widgetRef.current = null;
+      }
+      // Nettoyer tous les widgets restants
+      const remainingWidgets = container.querySelectorAll("altcha-widget");
+      remainingWidgets.forEach((widget) => {
+        widget.remove();
+      });
+    };
+  }, [challengeUrl, block.label]); // Retirer onChange des dépendances
 
   return (
-    <div className="space-y-4">
-      <Label className="text-lg sm:text-xl font-medium block text-gray-900 dark:text-slate-100 leading-tight flex items-center gap-2">
-        <Shield className="h-5 w-5" />
-        {block.label || "Vérification de sécurité"}
-        <span className="text-red-500 ml-1.5 text-base">*</span>
-      </Label>
+    <div className={cn("space-y-4", alignmentClasses[align] === "text-center" && "flex flex-col items-center", alignmentClasses[align] === "text-right" && "flex flex-col items-end")}>
+      {(block.label || block.required) && (
+        <Label className={cn(
+          "text-base font-medium flex items-center gap-2",
+          alignmentClasses[align]
+        )}>
+          <Shield className="h-5 w-5" />
+          {block.label || "Vérification anti-spam"}
+          {block.required && <span className="text-destructive ml-1">*</span>}
+        </Label>
+      )}
 
-      {/* Widget Friendly CAPTCHA */}
-      <div className="space-y-3">
-        <div 
-          id={containerId}
-          className="frc-captcha" 
-          data-sitekey={FRIENDLY_CAPTCHA_SITE_KEY}
-          data-lang="fr"
-        />
-
-        {/* Status badge */}
-        {isReady && (
-          <div className="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-              <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                ✓ Vérification réussie
-              </p>
-            </div>
+      <div 
+        ref={containerRef}
+        className={cn(
+          "w-full min-h-[100px]",
+          alignmentClasses[align] === "text-center" && "flex justify-center",
+          alignmentClasses[align] === "text-right" && "flex justify-end"
+        )}
+      >
+        {/* Le widget Altcha sera inséré ici dynamiquement */}
+        {isLoading && !error && (
+          <div className="p-4 text-sm text-muted-foreground text-center">
+            Chargement de la vérification...
           </div>
         )}
-
-        {/* Message d'erreur */}
         {error && (
-          <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {error}
-              </p>
-            </div>
+          <div className="p-4 border-2 border-destructive/20 rounded-lg bg-destructive/5 text-sm text-destructive">
+            Erreur: {error}
           </div>
         )}
-      </div>
-
-      {/* Info Friendly CAPTCHA */}
-      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
-        <Shield className="h-3 w-3" />
-        <span>
-          Protégé par{" "}
-          <a 
-            href="https://friendlycaptcha.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="underline hover:text-gray-700 dark:hover:text-slate-300"
-          >
-            Friendly CAPTCHA
-          </a>
-          {" "}• Respectueux de la vie privée • Sans tracking
-        </span>
       </div>
     </div>
   );

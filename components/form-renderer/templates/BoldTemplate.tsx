@@ -25,6 +25,12 @@ export function BoldTemplate({
 }: BoldTemplateProps) {
   const welcomeBlocks = blocks.filter((b) => b.type === "welcome")
   const formBlocks = blocks.filter((b) => b.type !== "welcome")
+  
+  // Vérifier si tous les blocs sont des blocs informatifs (menu-restaurant, heading, paragraph, etc.)
+  const hasOnlyInformationalBlocks = formBlocks.length > 0 && 
+    formBlocks.every(block => 
+      ["menu-restaurant", "heading", "paragraph", "youtube"].includes(block.type)
+    )
 
   return (
     <div 
@@ -56,8 +62,8 @@ export function BoldTemplate({
         ))}
       </div>
 
-      <div className="relative z-10 py-12 px-4">
-        <div className="max-w-3xl mx-auto space-y-8">
+      <div className="relative z-10 py-8 sm:py-12 px-3 sm:px-4">
+        <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
           {/* Blocs welcome - Design bold avec bordures épaisses */}
           {welcomeBlocks.map((block, index) => (
             <motion.div
@@ -72,7 +78,7 @@ export function BoldTemplate({
               }}
             >
               <div
-                className="bg-white border-8 border-orange-500 rounded-2xl p-10 shadow-[0_15px_50px_rgba(245,158,11,0.3)] hover:border-red-500 hover:shadow-[0_20px_60px_rgba(245,158,11,0.4)] hover:scale-[1.02] transition-all duration-300 transform hover:rotate-1"
+                className="bg-white border-4 sm:border-8 border-orange-500 rounded-lg sm:rounded-2xl p-5 sm:p-10 shadow-[0_15px_50px_rgba(245,158,11,0.3)] hover:border-red-500 hover:shadow-[0_20px_60px_rgba(245,158,11,0.4)] hover:scale-[1.02] transition-all duration-300 transform hover:rotate-1"
               >
                 <div className="space-y-6">
                   {renderBlock(block, undefined, () => {})}
@@ -96,7 +102,7 @@ export function BoldTemplate({
               <div
                 className={`bg-white border-8 ${
                   index % 2 === 0 ? "border-orange-500" : "border-red-500"
-                } rounded-2xl p-10 shadow-[0_12px_40px_rgba(245,158,11,0.25)] hover:border-yellow-500 hover:shadow-[0_18px_55px_rgba(245,158,11,0.35)] hover:scale-[1.02] transition-all duration-300 transform hover:-rotate-1`}
+                } rounded-lg sm:rounded-2xl p-5 sm:p-10 shadow-[0_12px_40px_rgba(245,158,11,0.25)] hover:border-yellow-500 hover:shadow-[0_18px_55px_rgba(245,158,11,0.35)] hover:scale-[1.02] transition-all duration-300 transform hover:-rotate-1`}
               >
                 <div className="space-y-6">
                   {renderBlock(block, answers[block.id], onAnswer)}
@@ -106,6 +112,7 @@ export function BoldTemplate({
           ))}
 
           {/* Bouton - Style bold ultra visible */}
+          {!hasOnlyInformationalBlocks && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -115,15 +122,17 @@ export function BoldTemplate({
             <Button
               onClick={onSubmit}
               disabled={isSubmitting}
-              className="w-full h-16 bg-gradient-to-r from-orange-500 to-red-500 border-8 border-orange-600 text-white rounded-2xl text-xl font-black shadow-[0_15px_50px_rgba(245,158,11,0.4)] hover:from-red-500 hover:to-orange-500 hover:shadow-[0_20px_60px_rgba(245,158,11,0.5)] hover:scale-110 transition-all duration-300 uppercase tracking-wider"
+              className="w-full h-14 sm:h-16 bg-gradient-to-r from-orange-500 to-red-500 border-4 sm:border-8 border-orange-600 text-white rounded-lg sm:rounded-2xl text-lg sm:text-xl font-black shadow-[0_15px_50px_rgba(245,158,11,0.4)] hover:from-red-500 hover:to-orange-500 hover:shadow-[0_20px_60px_rgba(245,158,11,0.5)] hover:scale-110 transition-all duration-300 uppercase tracking-wider"
               size="lg"
             >
               {isSubmitting ? "ENVOI..." : "🚀 ENVOYER MAINTENANT 🚀"}
             </Button>
           </motion.div>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 

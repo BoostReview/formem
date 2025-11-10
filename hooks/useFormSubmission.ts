@@ -213,30 +213,46 @@ export function useFormSubmission(formId: string): UseFormSubmissionResult {
 
       if (!response.ok) {
         // Afficher TOUT ce qu'on sait sur l'erreur
-        console.error("❌ Erreur API - Détails complets:", {
-          status,
-          statusText,
-          contentType,
-          contentLength,
-          responseTextLength: responseText.length,
-          parsedData: data,
-          error: data.error,
-          details: data.details,
-          hint: data.hint,
-          code: data.code,
-          fullData: data,
-        });
+        const errorDetails: Record<string, unknown> = {
+          status: status ?? "undefined",
+          statusText: statusText ?? "undefined",
+          contentType: contentType ?? "undefined",
+          contentLength: contentLength ?? "undefined",
+          responseTextLength: responseText?.length ?? 0,
+        };
+        
+        if (data && typeof data === "object") {
+          errorDetails.parsedData = data;
+          errorDetails.error = data.error ?? null;
+          errorDetails.details = data.details ?? null;
+          errorDetails.hint = data.hint ?? null;
+          errorDetails.code = data.code ?? null;
+          errorDetails.fullData = data;
+        } else {
+          errorDetails.parsedData = "Non disponible";
+          errorDetails.rawResponseText = responseText?.substring(0, 500) ?? "Vide";
+        }
+        
+        console.error("❌ Erreur API - Détails complets:", errorDetails);
         
         // Construire un message d'erreur plus descriptif
-        let errorMessage = data.error || `Erreur serveur (${status} ${statusText})`;
-        if (data.details) {
-          errorMessage += `: ${data.details}`;
-        }
-        if (data.hint) {
-          errorMessage += ` (${data.hint})`;
-        }
-        if (responseText && !data.error && !data.details) {
-          errorMessage += ` - Réponse: ${responseText.substring(0, 100)}`;
+        let errorMessage = "";
+        if (data && typeof data === "object" && data.error) {
+          errorMessage = String(data.error);
+          if (data.details) {
+            errorMessage += `: ${data.details}`;
+          }
+          if (data.hint) {
+            errorMessage += ` (${data.hint})`;
+          }
+        } else {
+          errorMessage = `Erreur serveur (${status} ${statusText || "Unknown"})`;
+          if (responseText && responseText.trim()) {
+            const preview = responseText.substring(0, 100);
+            if (preview) {
+              errorMessage += ` - Réponse: ${preview}`;
+            }
+          }
         }
         
         return {

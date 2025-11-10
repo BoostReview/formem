@@ -14,6 +14,13 @@ import { YesNoBlock } from "./YesNoBlock";
 import { ConsentBlock } from "./ConsentBlock";
 import { YouTubeBlock } from "./YouTubeBlock";
 import { CaptchaBlock } from "./CaptchaBlock";
+import { MenuRestaurantBlock } from "./MenuRestaurantBlock";
+import { FileBlock } from "./FileBlock";
+import { ImageBlock } from "./ImageBlock";
+import { DropdownBlock } from "./DropdownBlock";
+import { RatingBlock } from "./RatingBlock";
+import { AddressBlock } from "./AddressBlock";
+import { WebsiteBlock } from "./WebsiteBlock";
 import type { FormBlock } from "@/types";
 
 interface BlockRendererProps {
@@ -64,8 +71,22 @@ export function renderBlock(
       return <ConsentBlock {...props} />;
     case "captcha":
       return <CaptchaBlock {...props} />;
+    case "file":
+      return <FileBlock {...props} />;
     case "youtube":
       return <YouTubeBlock {...props} />;
+    case "menu-restaurant":
+      return <MenuRestaurantBlock {...props} />;
+    case "image":
+      return <ImageBlock {...props} />;
+    case "dropdown":
+      return <DropdownBlock {...props} />;
+    case "rating":
+      return <RatingBlock {...props} />;
+    case "address":
+      return <AddressBlock {...props} />;
+    case "website":
+      return <WebsiteBlock {...props} />;
     default:
       return (
         <div className="p-4 bg-muted rounded-lg">

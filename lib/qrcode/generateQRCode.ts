@@ -48,3 +48,6 @@ export async function generateQRCodeSVG(url: string): Promise<string> {
 }
 
 
+
+
+

@@ -208,3 +208,6 @@ Les formulaires publiés sont accessibles publiquement via `/f/[slug]`. Ils doiv
 Un système de rendu public complet, fluide et sécurisé, avec les deux layouts, animations, validation, et toutes les fonctionnalités nécessaires pour recevoir des réponses.
 
 
+
+
+

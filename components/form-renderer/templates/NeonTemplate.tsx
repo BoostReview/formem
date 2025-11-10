@@ -25,6 +25,12 @@ export function NeonTemplate({
 }: NeonTemplateProps) {
   const welcomeBlocks = blocks.filter((b) => b.type === "welcome")
   const formBlocks = blocks.filter((b) => b.type !== "welcome")
+  
+  // Vérifier si tous les blocs sont des blocs informatifs (menu-restaurant, heading, paragraph, etc.)
+  const hasOnlyInformationalBlocks = formBlocks.length > 0 && 
+    formBlocks.every(block => 
+      ["menu-restaurant", "heading", "paragraph", "youtube"].includes(block.type)
+    )
 
   return (
     <div 
@@ -64,8 +70,8 @@ export function NeonTemplate({
         />
       </div>
 
-      <div className="relative z-10 py-16 px-4">
-        <div className="max-w-2xl mx-auto space-y-10">
+      <div className="relative z-10 py-8 sm:py-16 px-3 sm:px-4">
+        <div className="max-w-2xl mx-auto space-y-6 sm:space-y-10">
           {/* Blocs welcome - Style néon */}
           {welcomeBlocks.map((block, index) => (
             <motion.div
@@ -75,7 +81,7 @@ export function NeonTemplate({
               transition={{ delay: index * 0.2, type: "spring", stiffness: 200 }}
             >
               <div
-                className="bg-gray-900/90 border-4 border-yellow-400 rounded-xl p-8 relative overflow-hidden"
+                className="bg-gray-900/90 border-4 border-yellow-400 rounded-lg sm:rounded-xl p-4 sm:p-8 relative overflow-hidden"
                 style={{
                   boxShadow: "0 0 40px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(245, 158, 11, 0.1)",
                 }}
@@ -112,7 +118,7 @@ export function NeonTemplate({
               }}
             >
               <div
-                className="bg-gray-900/90 border-4 border-yellow-400 rounded-xl p-8 hover:border-orange-400 transition-all duration-300 relative overflow-hidden"
+                className="bg-gray-900/90 border-4 border-yellow-400 rounded-lg sm:rounded-xl p-4 sm:p-8 hover:border-orange-400 transition-all duration-300 relative overflow-hidden"
                 style={{
                   boxShadow: "0 0 30px rgba(245, 158, 11, 0.4)",
                 }}
@@ -137,6 +143,7 @@ export function NeonTemplate({
           ))}
 
           {/* Bouton - Style néon */}
+          {!hasOnlyInformationalBlocks && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -146,7 +153,7 @@ export function NeonTemplate({
             <Button
               onClick={onSubmit}
               disabled={isSubmitting}
-              className="w-full h-16 bg-yellow-400 border-4 border-yellow-400 text-gray-900 hover:bg-orange-400 hover:border-orange-400 rounded-xl text-lg font-bold shadow-[0_0_40px_rgba(245,158,11,0.6)] hover:shadow-[0_0_60px_rgba(245,158,11,0.8)] transition-all duration-300"
+              className="w-full h-14 sm:h-16 bg-yellow-400 border-4 border-yellow-400 text-gray-900 hover:bg-orange-400 hover:border-orange-400 rounded-lg sm:rounded-xl text-base sm:text-lg font-bold shadow-[0_0_40px_rgba(245,158,11,0.6)] hover:shadow-[0_0_60px_rgba(245,158,11,0.8)] transition-all duration-300"
               size="lg"
             >
               {isSubmitting ? (
@@ -164,9 +171,11 @@ export function NeonTemplate({
               )}
             </Button>
           </motion.div>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 

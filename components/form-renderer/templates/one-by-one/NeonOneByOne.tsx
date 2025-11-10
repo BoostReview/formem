@@ -54,6 +54,8 @@ export function NeonOneByOne({
     }
   }
 
+  const isMenuRestaurant = currentBlock?.type === "menu-restaurant"
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col relative overflow-hidden">
       {/* Effet de grille subtile en fond */}
@@ -72,6 +74,7 @@ export function NeonOneByOne({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-3xl" />
 
       {/* Barre de progression dark professional */}
+      {!isMenuRestaurant && (
       <div className="relative z-10 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 px-8 py-6">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400 mb-3 tracking-wider uppercase">
@@ -92,6 +95,7 @@ export function NeonOneByOne({
           </div>
         </div>
       </div>
+      )}
 
       {/* Contenu centré dark professional */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
@@ -142,8 +146,8 @@ export function NeonOneByOne({
       </div>
 
       {/* Navigation dark professional */}
-      {currentBlock && !isInWelcomePhase && (
-        <div className="relative z-10 bg-slate-900/80 backdrop-blur-md border-t border-slate-700/50 px-8 py-7">
+      {currentBlock && !isInWelcomePhase && !isMenuRestaurant && (
+        <div className="relative z-10 bg-slate-900/80 backdrop-blur-md border-t border-slate-700/50 px-8 py-7 pb-12">
           <div className="max-w-3xl mx-auto">
             {error && (
               <motion.div
@@ -169,7 +173,14 @@ export function NeonOneByOne({
               )}
               {showNextButton && (
                 <Button
-                  onClick={currentIndex === totalBlocks - 1 ? onSubmit : onNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentIndex === totalBlocks - 1) {
+                      onSubmit();
+                    } else {
+                      onNext();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 h-11 px-8 rounded-xl font-medium text-base shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 transition-all duration-200"
                 >

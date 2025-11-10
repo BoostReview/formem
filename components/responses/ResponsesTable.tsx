@@ -208,6 +208,7 @@ export function ResponsesTable({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     enableRowSelection: true,
+    getRowId: (row) => row.id, // Utiliser l'ID de la réponse au lieu de l'index
     onRowSelectionChange: (updater) => {
       if (onSelectionChange) {
         if (typeof updater === "function") {

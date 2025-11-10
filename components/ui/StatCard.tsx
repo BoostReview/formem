@@ -3,7 +3,6 @@
 import * as React from "react"
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Card, CardContent, CardHeader, CardTitle } from "./card"
 
 interface StatCardProps {
   label: string
@@ -26,42 +25,43 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <Card className={cn("", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+    <div className={cn(
+      "p-6 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5",
+      "hover:border-black/20 dark:hover:border-white/20 transition-all",
+      className
+    )}>
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-medium text-black/60 dark:text-white/60 uppercase tracking-wide">
           {label}
-        </CardTitle>
+        </span>
         {Icon && (
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Icon className="h-4 w-4 text-primary" />
-          </div>
+          <Icon className="h-5 w-5 text-black/40 dark:text-white/40" />
         )}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {trend && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-            {trend.isPositive ? (
-              <TrendingUp className="h-3 w-3 text-green-600" />
-            ) : (
-              <TrendingDown className="h-3 w-3 text-red-600" />
-            )}
-            <span
-              className={cn(
-                trend.isPositive ? "text-green-600" : "text-red-600"
-              )}
-            >
-              {Math.abs(trend.value)}%
-            </span>
-            <span className="text-muted-foreground">vs mois dernier</span>
-          </div>
-        )}
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      <div className="text-3xl font-bold text-black/90 dark:text-white/90 mb-1">
+        {value}
+      </div>
+      {trend && (
+        <div className="flex items-center gap-1.5 text-xs mt-2">
+          {trend.isPositive ? (
+            <TrendingUp className="h-3.5 w-3.5 text-[#10B981]" />
+          ) : (
+            <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+          )}
+          <span className={cn(
+            "font-medium",
+            trend.isPositive ? "text-[#10B981]" : "text-red-500"
+          )}>
+            {Math.abs(trend.value)}%
+          </span>
+          <span className="text-black/40 dark:text-white/40">vs mois dernier</span>
+        </div>
+      )}
+      {description && (
+        <p className="text-xs text-black/60 dark:text-white/60 mt-2 leading-relaxed">
+          {description}
+        </p>
+      )}
+    </div>
   )
 }
-
-

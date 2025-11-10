@@ -93,3 +93,6 @@ Si vous préférez réexécuter tout le schéma (⚠️ peut écraser des donné
 **IMPORTANT** : Cette migration doit être exécutée **MAINTENANT** pour que l'application fonctionne !
 
 
+
+
+

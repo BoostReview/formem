@@ -1,0 +1,186 @@
+{
+  "generatedAt": "2025-11-10T19:02:31.836Z",
+  "total": 36,
+  "images": [
+    {
+      "fileName": "16702c00-9253-4850-9ccb-f26d874eee29.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/16702c00-9253-4850-9ccb-f26d874eee29.jpg",
+      "name": "16702c00-9253-4850-9ccb-f26d874eee29"
+    },
+    {
+      "fileName": "17450.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/17450.jpg",
+      "name": "17450"
+    },
+    {
+      "fileName": "203.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/203.jpg",
+      "name": "203"
+    },
+    {
+      "fileName": "5559852.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/5559852.jpg",
+      "name": "5559852"
+    },
+    {
+      "fileName": "5594016.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/5594016.jpg",
+      "name": "5594016"
+    },
+    {
+      "fileName": "a-c-NqXqLPhdbvU-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/a-c-NqXqLPhdbvU-unsplash.jpg",
+      "name": "a-c-NqXqLPhdbvU-unsplash"
+    },
+    {
+      "fileName": "abstract_pattern_design_background_2007.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/abstract_pattern_design_background_2007.jpg",
+      "name": "abstract_pattern_design_background_2007"
+    },
+    {
+      "fileName": "annie-spratt-zA7I5BtFbvw-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/annie-spratt-zA7I5BtFbvw-unsplash.jpg",
+      "name": "annie-spratt-zA7I5BtFbvw-unsplash"
+    },
+    {
+      "fileName": "brandi-redd-aJTiW00qqtI-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/brandi-redd-aJTiW00qqtI-unsplash.jpg",
+      "name": "brandi-redd-aJTiW00qqtI-unsplash"
+    },
+    {
+      "fileName": "casey-horner-RmoWqDCqN2E-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/casey-horner-RmoWqDCqN2E-unsplash.jpg",
+      "name": "casey-horner-RmoWqDCqN2E-unsplash"
+    },
+    {
+      "fileName": "engin-akyurt-Hlkuojv_P6I-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/engin-akyurt-Hlkuojv_P6I-unsplash.jpg",
+      "name": "engin-akyurt-Hlkuojv_P6I-unsplash"
+    },
+    {
+      "fileName": "erol-ahmed-XsQ8nUKpAO4-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/erol-ahmed-XsQ8nUKpAO4-unsplash.jpg",
+      "name": "erol-ahmed-XsQ8nUKpAO4-unsplash"
+    },
+    {
+      "fileName": "flower-7679117.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/flower-7679117.jpg",
+      "name": "flower-7679117"
+    },
+    {
+      "fileName": "fond-hexadecimal-pour-la-mise-en-reseau.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/fond-hexadecimal-pour-la-mise-en-reseau.jpg",
+      "name": "fond-hexadecimal-pour-la-mise-en-reseau"
+    },
+    {
+      "fileName": "jason-leung-Xaanw0s0pMk-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/jason-leung-Xaanw0s0pMk-unsplash.jpg",
+      "name": "jason-leung-Xaanw0s0pMk-unsplash"
+    },
+    {
+      "fileName": "jean-philippe-delberghe-75xPHEQBmvA-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/jean-philippe-delberghe-75xPHEQBmvA-unsplash.jpg",
+      "name": "jean-philippe-delberghe-75xPHEQBmvA-unsplash"
+    },
+    {
+      "fileName": "keith-misner-h0Vxgz5tyXA-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/keith-misner-h0Vxgz5tyXA-unsplash.jpg",
+      "name": "keith-misner-h0Vxgz5tyXA-unsplash"
+    },
+    {
+      "fileName": "lavender-7638368_1920.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/lavender-7638368_1920.jpg",
+      "name": "lavender-7638368_1920"
+    },
+    {
+      "fileName": "luke-stackpoole-ZRsJmpt9pNI-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/luke-stackpoole-ZRsJmpt9pNI-unsplash.jpg",
+      "name": "luke-stackpoole-ZRsJmpt9pNI-unsplash"
+    },
+    {
+      "fileName": "marcus-moody-r9QAi-Q3Mss-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/marcus-moody-r9QAi-Q3Mss-unsplash.jpg",
+      "name": "marcus-moody-r9QAi-Q3Mss-unsplash"
+    },
+    {
+      "fileName": "martin-martz-7Zou5Z2g72U-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/martin-martz-7Zou5Z2g72U-unsplash.jpg",
+      "name": "martin-martz-7Zou5Z2g72U-unsplash"
+    },
+    {
+      "fileName": "milad-fakurian-E8Ufcyxz514-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/milad-fakurian-E8Ufcyxz514-unsplash.jpg",
+      "name": "milad-fakurian-E8Ufcyxz514-unsplash"
+    },
+    {
+      "fileName": "mona-eendra-vC8wj_Kphak-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/mona-eendra-vC8wj_Kphak-unsplash.jpg",
+      "name": "mona-eendra-vC8wj_Kphak-unsplash"
+    },
+    {
+      "fileName": "mymind-XUlsF9LYeVk-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/mymind-XUlsF9LYeVk-unsplash.jpg",
+      "name": "mymind-XUlsF9LYeVk-unsplash"
+    },
+    {
+      "fileName": "OF18OA0.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/OF18OA0.jpg",
+      "name": "OF18OA0"
+    },
+    {
+      "fileName": "pastel_rainbow_coloured_watercolour_texture_background_0612.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/pastel_rainbow_coloured_watercolour_texture_background_0612.jpg",
+      "name": "pastel_rainbow_coloured_watercolour_texture_background_0612"
+    },
+    {
+      "fileName": "pawel-czerwinski-HbcfaO4m03s-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/pawel-czerwinski-HbcfaO4m03s-unsplash.jpg",
+      "name": "pawel-czerwinski-HbcfaO4m03s-unsplash"
+    },
+    {
+      "fileName": "ray-mallick-5J1bHRX1fNw-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/ray-mallick-5J1bHRX1fNw-unsplash.jpg",
+      "name": "ray-mallick-5J1bHRX1fNw-unsplash"
+    },
+    {
+      "fileName": "rm209-ning-19-e.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/rm209-ning-19-e.jpg",
+      "name": "rm209-ning-19-e"
+    },
+    {
+      "fileName": "rm222batch3-kul-19.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/rm222batch3-kul-19.jpg",
+      "name": "rm222batch3-kul-19"
+    },
+    {
+      "fileName": "rm309-adj-14.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/rm309-adj-14.jpg",
+      "name": "rm309-adj-14"
+    },
+    {
+      "fileName": "robin-schreiner-7y4858E8PfA-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/robin-schreiner-7y4858E8PfA-unsplash.jpg",
+      "name": "robin-schreiner-7y4858E8PfA-unsplash"
+    },
+    {
+      "fileName": "solen-feyissa-_Cb6oD5oiVE-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/solen-feyissa-_Cb6oD5oiVE-unsplash.jpg",
+      "name": "solen-feyissa-_Cb6oD5oiVE-unsplash"
+    },
+    {
+      "fileName": "surface-455124_1920.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/surface-455124_1920.jpg",
+      "name": "surface-455124_1920"
+    },
+    {
+      "fileName": "thomas-lefebvre-mT1uxKaegSQ-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/thomas-lefebvre-mT1uxKaegSQ-unsplash.jpg",
+      "name": "thomas-lefebvre-mT1uxKaegSQ-unsplash"
+    },
+    {
+      "fileName": "xinyi-wen-qjCHPZbeXCQ-unsplash.jpg",
+      "url": "http://localhost:3000/api/files/backgrounds/xinyi-wen-qjCHPZbeXCQ-unsplash.jpg",
+      "name": "xinyi-wen-qjCHPZbeXCQ-unsplash"
+    }
+  ]
+}

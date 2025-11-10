@@ -54,6 +54,8 @@ export function ElegantOneByOne({
     }
   }
 
+  const isMenuRestaurant = currentBlock?.type === "menu-restaurant"
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 flex flex-col relative">
       {/* Motif subtil en fond */}
@@ -68,6 +70,7 @@ export function ElegantOneByOne({
       />
 
       {/* Barre de progression corporate */}
+      {!isMenuRestaurant && (
       <div className="relative z-10 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-8 py-6">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between text-xs font-semibold text-gray-500 mb-4 tracking-wider uppercase">
@@ -88,6 +91,7 @@ export function ElegantOneByOne({
           </div>
         </div>
       </div>
+      )}
 
       {/* Contenu centré élégant et sobre */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
@@ -138,8 +142,8 @@ export function ElegantOneByOne({
       </div>
 
       {/* Navigation élégante et sobre */}
-      {currentBlock && !isInWelcomePhase && (
-        <div className="relative z-10 bg-white/90 backdrop-blur-md border-t border-gray-200/80 px-8 py-7">
+      {currentBlock && !isInWelcomePhase && !isMenuRestaurant && (
+        <div className="relative z-10 bg-white/90 backdrop-blur-md border-t border-gray-200/80 px-8 py-7 pb-12">
           <div className="max-w-3xl mx-auto">
             {error && (
               <motion.div
@@ -165,7 +169,14 @@ export function ElegantOneByOne({
               )}
               {showNextButton && (
                 <Button
-                  onClick={currentIndex === totalBlocks - 1 ? onSubmit : onNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentIndex === totalBlocks - 1) {
+                      onSubmit();
+                    } else {
+                      onNext();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 h-11 px-8 rounded-xl font-medium text-base shadow-lg shadow-gray-900/10 hover:shadow-xl hover:shadow-gray-900/15 transition-all duration-250"
                 >

@@ -18,6 +18,13 @@ import {
   FileCheck,
   Shield,
   Youtube,
+  UtensilsCrossed,
+  Upload,
+  Image,
+  ChevronDown,
+  Star,
+  MapPin,
+  Globe,
 } from "lucide-react"
 import { useDraggable } from "@dnd-kit/core"
 import { BlockCard } from "./BlockCard"
@@ -123,10 +130,52 @@ const blocks: BlockDefinition[] = [
     icon: Shield,
   },
   {
+    type: "file",
+    label: "Fichier",
+    description: "Upload de fichier",
+    icon: Upload,
+  },
+  {
     type: "youtube",
     label: "Vidéo YouTube",
     description: "Vidéo intégrée",
     icon: Youtube,
+  },
+  {
+    type: "menu-restaurant",
+    label: "Menu Restaurant",
+    description: "Menu modulable pour restaurants",
+    icon: UtensilsCrossed,
+  },
+  {
+    type: "image",
+    label: "Image",
+    description: "Image avec options avancées",
+    icon: Image,
+  },
+  {
+    type: "dropdown",
+    label: "Liste déroulante",
+    description: "Menu déroulant",
+    icon: ChevronDown,
+  },
+  {
+    type: "rating",
+    label: "Note",
+    description: "Évaluation par étoiles",
+    icon: Star,
+  },
+  {
+    type: "address",
+    label: "Adresse",
+    description: "Adresse complète",
+    icon: MapPin,
+  },
+  {
+    type: "website",
+    label: "Site web",
+    description: "URL de site web",
+    icon: Globe,
   },
 ]
 

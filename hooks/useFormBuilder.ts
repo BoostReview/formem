@@ -171,7 +171,14 @@ function getDefaultLabel(type: BlockType): string {
     "yes-no": "Oui/Non",
     consent: "Consentement",
     captcha: "Vérification de sécurité",
+    file: "Télécharger un fichier",
     youtube: "Vidéo YouTube",
+    "menu-restaurant": "Menu Restaurant",
+    image: "Image",
+    dropdown: "Liste déroulante",
+    rating: "Note",
+    address: "Adresse",
+    website: "Site web",
   }
   return labels[type] || "Nouveau bloc"
 }
@@ -193,7 +200,56 @@ function getDefaultProps(type: BlockType): Partial<FormBlock> {
     "yes-no": {},
     consent: { consentText: "J'accepte les conditions" as any },
     captcha: { required: true },
+    file: { maxFileSize: 10 },
     youtube: {},
+    "menu-restaurant": { 
+      sections: [
+        {
+          name: "Entrées",
+          items: [
+            { name: "Salade César", description: "Laitue romaine, parmesan, croûtons", price: "8.50€" },
+            { name: "Soupe du jour", description: "Demandez à votre serveur", price: "6.00€" }
+          ]
+        },
+        {
+          name: "Plats",
+          items: [
+            { name: "Burger maison", description: "Pain brioché, steak 180g, cheddar", price: "15.00€" },
+            { name: "Pâtes carbonara", description: "Crème fraîche, lardons, parmesan", price: "13.50€" }
+          ]
+        },
+        {
+          name: "Desserts",
+          items: [
+            { name: "Tiramisu", description: "Mascarpone, café, cacao", price: "7.00€" },
+            { name: "Crème brûlée", description: "Vanille de Madagascar", price: "6.50€" }
+          ]
+        }
+      ] as any 
+    },
+    image: {
+      imageUrl: "",
+      altText: "",
+      caption: "",
+      linkUrl: "",
+      size: "medium" as any,
+      alignment: "center" as any,
+      borderRadius: 8,
+      opacity: 100,
+    },
+    dropdown: {
+      options: ["Option 1", "Option 2"],
+    },
+    rating: {
+      maxRating: 5,
+      label: "Notez votre expérience",
+    },
+    address: {
+      fields: ["street", "city", "zip", "country"] as any,
+    },
+    website: {
+      placeholder: "https://exemple.com",
+    },
   }
   return defaults[type] || {}
 }

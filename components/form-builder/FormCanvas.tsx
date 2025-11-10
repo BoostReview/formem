@@ -24,6 +24,7 @@ import { FormBlock, ThemeJSON } from "@/types"
 import { Canvas } from "./Canvas"
 import { DroppableCanvas } from "./DroppableCanvas"
 import { BlockRenderer } from "./BlockRenderer"
+import { DynamicButtonPreview } from "./DynamicButtonPreview"
 import { cn } from "@/lib/utils"
 import { ScaleIn } from "@/components/animations/ScaleIn"
 import { useGoogleFont } from "@/hooks/useGoogleFont"
@@ -136,9 +137,52 @@ export function FormCanvas({
   const fontFamily = previewFont || theme?.fonts?.family || "Inter"
   useGoogleFont(fontFamily)
   
-  const canvasStyle = React.useMemo(() => ({
-    fontFamily: `"${fontFamily}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`,
-  }), [fontFamily])
+  // Appliquer le background du thème (dégradé ou image)
+  const backgroundImage = theme?.backgroundImage
+  const backgroundGradient = theme?.backgroundGradient
+  const backgroundImageOpacity = theme?.backgroundImageOpacity ?? 1
+  const backgroundImageBlur = theme?.backgroundImageBlur ?? 0
+  const backgroundColor = theme?.colors?.background || "#ffffff"
+  
+  // Logs pour déboguer l'image de fond
+  React.useEffect(() => {
+    console.log('[FormCanvas] Background debug:', {
+      hasTheme: !!theme,
+      backgroundImage: backgroundImage || 'NULL',
+      backgroundImageType: typeof backgroundImage,
+      backgroundImageLength: backgroundImage ? String(backgroundImage).length : 0,
+      backgroundGradient: backgroundGradient || 'NULL',
+      backgroundImageOpacity,
+      backgroundImageBlur,
+      backgroundColor,
+      themeKeys: theme ? Object.keys(theme) : [],
+      fullTheme: JSON.stringify(theme, null, 2),
+    })
+  }, [theme, backgroundImage, backgroundGradient, backgroundImageOpacity, backgroundImageBlur, backgroundColor])
+  
+  const canvasStyle = React.useMemo(() => {
+    const style: React.CSSProperties = {
+      fontFamily: `"${fontFamily}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`,
+    }
+    
+    // Appliquer le background - NE PAS mélanger background et backgroundColor
+    // Utiliser exclusivement l'une ou l'autre, jamais les deux
+    if (backgroundGradient && !backgroundImage) {
+      style.background = backgroundGradient
+      // S'assurer que backgroundColor n'est pas défini
+      delete (style as any).backgroundColor
+    } else if (!backgroundImage && !backgroundGradient) {
+      style.backgroundColor = backgroundColor
+      // S'assurer que background n'est pas défini
+      delete (style as any).background
+    } else {
+      // Si backgroundImage, on ne met rien ici car c'est géré par le div parent
+      delete (style as any).background
+      delete (style as any).backgroundColor
+    }
+    
+    return style
+  }, [fontFamily, backgroundGradient, backgroundImage, backgroundColor])
 
   const handleDragStart = (event: DragStartEvent) => {
     const activeId = event.active.id as string
@@ -159,67 +203,162 @@ export function FormCanvas({
 
   return (
     <>
-      <DroppableCanvas
-        id="canvas-drop-zone"
-        className={cn("w-full h-full", className)}
-        style={canvasStyle}
-        onClick={(e) => {
-          // Si on clique directement sur le canvas (pas sur un bloc), désélectionner
-          if (e.target === e.currentTarget) {
-            onBlockSelect(null)
+      <div 
+        className="relative w-full h-full rounded-[14px] overflow-hidden"
+        style={(() => {
+          const style: React.CSSProperties = {
+            minHeight: "600px",
           }
-        }}
+          // NE PAS mélanger background et backgroundColor - utiliser exclusivement l'une ou l'autre
+          if (backgroundGradient && !backgroundImage) {
+            style.background = backgroundGradient
+            // S'assurer que backgroundColor n'est pas défini
+            delete (style as any).backgroundColor
+            console.log('[FormCanvas] Style appliqué: background gradient', backgroundGradient)
+          } else if (!backgroundImage && !backgroundGradient) {
+            style.backgroundColor = backgroundColor
+            // S'assurer que background n'est pas défini
+            delete (style as any).background
+            console.log('[FormCanvas] Style appliqué: backgroundColor', backgroundColor)
+          } else {
+            // Si backgroundImage, backgroundColor transparent
+            style.backgroundColor = "transparent"
+            delete (style as any).background
+            console.log('[FormCanvas] Style appliqué: backgroundColor transparent (image de fond)', {
+              backgroundImage: backgroundImage || 'NULL',
+              backgroundImageURL: backgroundImage ? `url(${backgroundImage})` : 'NULL',
+              hasBackgroundImage: !!backgroundImage,
+              backgroundImageOpacity,
+              backgroundImageBlur,
+            })
+          }
+          return style
+        })()}
       >
+        {/* Image de fond avec opacité et flou */}
+        {backgroundImage ? (
+          <>
+            {(() => {
+              const imageUrl = `url(${backgroundImage})`
+              console.log('[FormCanvas] Rendu div image de fond:', {
+                backgroundImage: String(backgroundImage),
+                backgroundImageURL: imageUrl,
+                opacity: backgroundImageOpacity,
+                blur: backgroundImageBlur,
+                hasBackgroundImage: !!backgroundImage,
+              })
+              return null
+            })()}
+            <div
+              className="absolute inset-0 rounded-[14px]"
+              style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                opacity: backgroundImageOpacity,
+                filter: backgroundImageBlur > 0 ? `blur(${backgroundImageBlur}px)` : "none",
+                zIndex: 0,
+                pointerEvents: "none",
+              }}
+            />
+          </>
+        ) : null}
+        
+        {/* Overlay si image de fond - réduit pour laisser voir l'image */}
+        {backgroundImage && (
+          <div 
+            className="absolute inset-0 rounded-[14px]"
+            style={{
+              backgroundColor: backgroundColor,
+              opacity: 0.3, // Réduit de 0.9 à 0.3 pour laisser voir l'image
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+        
+        <DroppableCanvas
+          id="canvas-drop-zone"
+          className={cn("w-full h-full relative", className)}
+          style={{
+            ...canvasStyle,
+            position: "relative",
+            zIndex: 2,
+          }}
+          onClick={(e) => {
+            // Si on clique directement sur le canvas (pas sur un bloc), désélectionner
+            if (e.target === e.currentTarget) {
+              onBlockSelect(null)
+            }
+          }}
+        >
         {blocks.length > 0 ? (
-          <SortableContext
-            items={blocks.map((block) => block.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="p-6 space-y-4 relative">
-              {blocks.map((block, index) => (
-                <React.Fragment key={block.id}>
-                  {/* Indicateur de position d'insertion */}
-                  {draggingFromPalette && dropPosition === index && (
-                    <motion.div
-                      initial={{ opacity: 0, scaleX: 0 }}
-                      animate={{ opacity: 1, scaleX: 1 }}
-                      exit={{ opacity: 0, scaleX: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="h-1.5 w-full bg-primary rounded-full mb-4 shadow-lg shadow-primary/50"
-                    />
-                  )}
-                  <ScaleIn>
-                    <SortableBlock
-                      block={block}
-                      isSelected={selectedBlockId === block.id}
-                      isEditing={isEditing}
-                      onSelect={() => onBlockSelect(block.id)}
-                      onUpdate={(updates) => onBlockUpdate(block.id, updates)}
-                      onDuplicate={() => onBlockDuplicate(block.id)}
-                      onDelete={() => onBlockDelete(block.id)}
-                      onRefSet={(id, element) => {
-                        if (element) {
-                          blockRefs.current.set(id, element)
-                        } else {
-                          blockRefs.current.delete(id)
-                        }
-                      }}
-                    />
-                  </ScaleIn>
-                </React.Fragment>
-              ))}
-              {/* Indicateur à la fin si on drop après le dernier bloc */}
-              {draggingFromPalette && dropPosition === blocks.length && (
-                <motion.div
-                  initial={{ opacity: 0, scaleX: 0 }}
-                  animate={{ opacity: 1, scaleX: 1 }}
-                  exit={{ opacity: 0, scaleX: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="h-1.5 w-full bg-primary rounded-full mt-4 shadow-lg shadow-primary/50"
-                />
-              )}
-            </div>
-          </SortableContext>
+          <>
+            <SortableContext
+              items={blocks.map((block) => block.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="p-6 space-y-4 relative">
+                {blocks.map((block, index) => (
+                  <React.Fragment key={block.id}>
+                    {/* Indicateur de position d'insertion */}
+                    {draggingFromPalette && dropPosition === index && (
+                      <motion.div
+                        initial={{ opacity: 0, scaleX: 0 }}
+                        animate={{ opacity: 1, scaleX: 1 }}
+                        exit={{ opacity: 0, scaleX: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="h-1.5 w-full bg-primary rounded-full mb-4 shadow-lg shadow-primary/50"
+                      />
+                    )}
+                    <ScaleIn>
+                      <SortableBlock
+                        block={block}
+                        isSelected={selectedBlockId === block.id}
+                        isEditing={isEditing}
+                        onSelect={() => onBlockSelect(block.id)}
+                        onUpdate={(updates) => onBlockUpdate(block.id, updates)}
+                        onDuplicate={() => onBlockDuplicate(block.id)}
+                        onDelete={() => onBlockDelete(block.id)}
+                        onRefSet={(id, element) => {
+                          if (element) {
+                            blockRefs.current.set(id, element)
+                          } else {
+                            blockRefs.current.delete(id)
+                          }
+                        }}
+                      />
+                    </ScaleIn>
+                  </React.Fragment>
+                ))}
+                {/* Indicateur à la fin si on drop après le dernier bloc */}
+                {draggingFromPalette && dropPosition === blocks.length && (
+                  <motion.div
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    exit={{ opacity: 0, scaleX: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="h-1.5 w-full bg-primary rounded-full mt-4 shadow-lg shadow-primary/50"
+                  />
+                )}
+              </div>
+            </SortableContext>
+            
+            {/* Aperçu du bouton d'envoi avec le style personnalisé */}
+            {blocks.some(b => b.type !== "welcome" && b.type !== "heading" && b.type !== "paragraph") && (
+              <div className="px-8 pt-8 pb-20 border-t border-dashed border-gray-200 mt-4 overflow-visible">
+                <div className="flex justify-center overflow-visible">
+                  <DynamicButtonPreview theme={theme || {} as any} disabled className="cursor-not-allowed">
+                    Envoyer
+                  </DynamicButtonPreview>
+                </div>
+                <p className="text-xs text-muted-foreground text-center mt-4">
+                  Aperçu du bouton d'envoi avec votre style personnalisé
+                </p>
+              </div>
+            )}
+          </>
         ) : (
           // Indicateur quand il n'y a pas de blocs
           <div className="p-6">
@@ -235,6 +374,7 @@ export function FormCanvas({
           </div>
         )}
       </DroppableCanvas>
+      </div>
     </>
   )
 }

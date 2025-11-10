@@ -43,25 +43,20 @@ export default function SignInPage() {
 
   const onSubmit = async (data: SignInFormValues) => {
     setIsLoading(true)
-    try {
-      const result = await signIn(data.email, data.password)
+    const result = await signIn(data.email, data.password)
 
-      if (!result.success) {
-        // Si l'erreur contient "Invalid login credentials", afficher un message en français
-        const errorMessage =
-          result.error?.includes("Invalid login credentials") ||
-          result.error?.includes("Invalid")
-            ? "Email ou mot de passe incorrect"
-            : result.error || "Une erreur s'est produite"
+    if (!result.success) {
+      // Si l'erreur contient "Invalid login credentials", afficher un message en français
+      const errorMessage =
+        result.error?.includes("Invalid login credentials") ||
+        result.error?.includes("Invalid")
+          ? "Email ou mot de passe incorrect"
+          : result.error || "Une erreur s'est produite"
 
-        toast.error(errorMessage)
-        setIsLoading(false)
-      }
-      // Si succès, signIn redirige automatiquement vers /dashboard
-    } catch (error) {
-      toast.error("Une erreur inattendue s'est produite")
+      toast.error(errorMessage)
       setIsLoading(false)
     }
+    // Si succès, signIn redirige automatiquement vers /dashboard
   }
 
   return (

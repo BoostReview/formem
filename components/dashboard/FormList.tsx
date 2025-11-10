@@ -45,18 +45,23 @@ export function FormList({
 
   return (
     <div className="space-y-3">
-      {forms.map((form) => (
-        <FormCard
+      {forms.map((form, index) => (
+        <div
           key={form.id}
-          form={form}
-          responseCount={responseCounts[form.id] || 0}
-          onEdit={onEdit}
-          onPreview={onPreview}
-          onShare={onShare}
-          onViewResponses={onViewResponses}
-          onDuplicate={onDuplicate}
-          onDelete={onDelete}
-        />
+          className="animate-slide-in-up"
+          style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
+        >
+          <FormCard
+            form={form}
+            responseCount={responseCounts[form.id] || 0}
+            onEdit={onEdit}
+            onPreview={onPreview}
+            onShare={onShare}
+            onViewResponses={onViewResponses}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+          />
+        </div>
       ))}
     </div>
   )

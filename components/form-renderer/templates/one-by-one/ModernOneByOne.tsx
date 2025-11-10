@@ -21,6 +21,7 @@ interface ModernOneByOneProps {
   showNextButton: boolean
   showPreviousButton: boolean
   error?: string | null
+  nextBlockForHeading?: FormBlock
 }
 
 export function ModernOneByOne({
@@ -38,6 +39,7 @@ export function ModernOneByOne({
   showNextButton,
   showPreviousButton,
   error,
+  nextBlockForHeading,
 }: ModernOneByOneProps) {
   const isInWelcomePhase = currentIndex < welcomeBlocks.length
   const totalBlocks = welcomeBlocks.length + blocks.length
@@ -54,9 +56,12 @@ export function ModernOneByOne({
     }
   }
 
+  const isMenuRestaurant = currentBlock?.type === "menu-restaurant"
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex flex-col">
       {/* Barre de progression moderne avec accent bleu */}
+      {!isMenuRestaurant && (
       <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-8 py-5">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-3 tracking-wide">
@@ -77,6 +82,7 @@ export function ModernOneByOne({
           </div>
         </div>
       </div>
+      )}
 
       {/* Contenu centré avec carte moderne */}
       <div className="flex-1 flex items-center justify-center px-6 py-16">
@@ -93,10 +99,26 @@ export function ModernOneByOne({
                 {currentBlock && (
                   <div className="space-y-12">
                     <div className="space-y-10">
-                      {renderBlock(
-                        currentBlock,
-                        answers[currentBlock.id],
-                        onAnswer
+                      {/* Si c'est un heading et qu'il y a un bloc suivant, afficher les deux */}
+                      {currentBlock.type === "heading" && nextBlockForHeading ? (
+                        <>
+                          {renderBlock(
+                            currentBlock,
+                            answers[currentBlock.id],
+                            onAnswer
+                          )}
+                          {renderBlock(
+                            nextBlockForHeading,
+                            answers[nextBlockForHeading.id],
+                            onAnswer
+                          )}
+                        </>
+                      ) : (
+                        renderBlock(
+                          currentBlock,
+                          answers[currentBlock.id],
+                          onAnswer
+                        )
                       )}
                     </div>
 
@@ -127,8 +149,8 @@ export function ModernOneByOne({
       </div>
 
       {/* Navigation moderne */}
-      {currentBlock && !isInWelcomePhase && (
-        <div className="bg-white/90 backdrop-blur-md border-t border-slate-200/60 px-8 py-7">
+      {currentBlock && !isInWelcomePhase && !isMenuRestaurant && (
+        <div className="bg-white/90 backdrop-blur-md border-t border-slate-200/60 px-8 py-7 pb-12">
           <div className="max-w-3xl mx-auto">
             {error && (
               <motion.div
@@ -154,7 +176,14 @@ export function ModernOneByOne({
               )}
               {showNextButton && (
                 <Button
-                  onClick={currentIndex === totalBlocks - 1 ? onSubmit : onNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentIndex === totalBlocks - 1) {
+                      onSubmit();
+                    } else {
+                      onNext();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 h-11 px-8 rounded-xl font-medium text-base shadow-md hover:shadow-lg transition-all duration-200"
                 >

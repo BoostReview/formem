@@ -38,3 +38,6 @@ Vous devriez voir :
 Si vous voyez l'erreur de création client, c'est que `SUPABASE_SERVICE_ROLE_KEY` manque ou est invalide.
 
 
+
+
+

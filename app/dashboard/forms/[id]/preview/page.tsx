@@ -104,13 +104,16 @@ export default function PreviewFormPage() {
 
       {/* Prévisualisation */}
       <div className={cn(
-        "flex-1 overflow-hidden",
+        "flex-1 overflow-auto flex items-start justify-center bg-muted/30",
         showMobilePreview && "max-w-md mx-auto border-x border-b"
       )}>
-        <div className={cn(
-          "h-full transition-all",
-          showMobilePreview ? "w-full" : "w-full"
-        )}>
+        <div 
+          className="w-full transition-all py-8"
+          style={{
+            transform: showMobilePreview ? "scale(1)" : "scale(0.85)",
+            transformOrigin: "center top"
+          }}
+        >
           <FormRenderer form={form} />
         </div>
       </div>

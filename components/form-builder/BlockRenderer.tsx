@@ -19,6 +19,13 @@ import { YesNoBlock } from "./blocks/YesNoBlock"
 import { ConsentBlock } from "./blocks/ConsentBlock"
 import { YouTubeBlock } from "./blocks/YouTubeBlock"
 import { CaptchaBlock } from "./blocks/CaptchaBlock"
+import { MenuRestaurantBlock } from "./blocks/MenuRestaurantBlock"
+import { FileBlock } from "./blocks/FileBlock"
+import { ImageBlock } from "./blocks/ImageBlock"
+import { DropdownBlock } from "./blocks/DropdownBlock"
+import { RatingBlock } from "./blocks/RatingBlock"
+import { AddressBlock } from "./blocks/AddressBlock"
+import { WebsiteBlock } from "./blocks/WebsiteBlock"
 
 interface BlockRendererProps {
   block: FormBlock
@@ -91,8 +98,22 @@ export function BlockRenderer({
         return <ConsentBlock {...commonProps} />
       case "captcha":
         return <CaptchaBlock {...commonProps} />
+      case "file":
+        return <FileBlock {...commonProps} />
       case "youtube":
         return <YouTubeBlock {...commonProps} />
+      case "menu-restaurant":
+        return <MenuRestaurantBlock {...commonProps} />
+      case "image":
+        return <ImageBlock {...commonProps} />
+      case "dropdown":
+        return <DropdownBlock {...commonProps} />
+      case "rating":
+        return <RatingBlock {...commonProps} />
+      case "address":
+        return <AddressBlock {...commonProps} />
+      case "website":
+        return <WebsiteBlock {...commonProps} />
       default:
         return <div className="text-muted-foreground">Bloc inconnu</div>
     }

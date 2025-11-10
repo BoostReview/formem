@@ -80,7 +80,14 @@ export type BlockType =
   | "yes-no"
   | "consent"
   | "captcha"
-  | "youtube";
+  | "youtube"
+  | "menu-restaurant"
+  | "file"
+  | "image"
+  | "dropdown"
+  | "rating"
+  | "address"
+  | "website";
 
 export interface ThemeJSON {
   colors: {
@@ -96,6 +103,9 @@ export interface ThemeJSON {
   radius: number;
   style?: "minimal" | "gradient" | "glassmorphism" | "neon" | "elegant" | "modern" | "bold" | "soft";
   backgroundGradient?: string | null;
+  backgroundImage?: string | null;
+  backgroundImageOpacity?: number;
+  backgroundImageBlur?: number;
   cardStyle?: "flat" | "elevated" | "glass" | "sectioned" | "bold" | "dynamic";
   shadowIntensity?: "none" | "light" | "medium" | "strong";
   shadowColor?: string;
@@ -107,6 +117,9 @@ export interface ThemeJSON {
   borderStyle?: "subtle" | "normal" | "bold";
   boldAccents?: boolean;
   energeticAnimations?: boolean;
+  buttonStyle?: "default" | "rounded" | "pill" | "sharp" | "3d" | "outline" | "ghost" | "gradient" | "glassmorphism" | "neumorphism" | "gradient-animated" | "glow" | "elevated" | "minimal" | "bold" | "soft" | "modern" | "ripple" | "flat" | "skeuomorphic";
+  buttonSize?: "sm" | "md" | "lg" | "xl";
+  buttonAnimation?: "none" | "hover-lift" | "hover-grow" | "hover-shine" | "hover-pulse" | "hover-glow" | "hover-slide" | "hover-bounce" | "hover-rotate" | "hover-gradient" | "hover-border" | "hover-scale-down" | "hover-wiggle" | "hover-ripple" | "hover-float" | "hover-shake" | "hover-squeeze" | "hover-flip" | "hover-glow-pulse" | "hover-slide-up" | "hover-slide-down" | "hover-slide-left" | "hover-slide-right" | "hover-zoom-in" | "hover-zoom-out" | "hover-elastic" | "hover-3d-tilt" | "hover-spin-slow" | "hover-gradient-shift" | "hover-blur-focus" | "hover-skew" | "hover-perspective" | "hover-wave" | "hover-magnetic" | "hover-liquid" | "hover-breathe";
   [key: string]: unknown;
 }
 

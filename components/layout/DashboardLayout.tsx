@@ -8,11 +8,9 @@ import {
   FileText,
   Settings,
   Menu,
-  X,
-  Plus,
   Search,
   User,
-  LogOut,
+  Bell,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -28,8 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
-import { FadeIn } from "@/components/animations/FadeIn"
 import { LogoutButton } from "@/components/dashboard/LogoutButton"
 import { NotificationsDropdown } from "@/components/notifications/NotificationsDropdown"
 import { Toaster } from "@/components/ui/toaster"
@@ -61,43 +57,40 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0F0F0F]">
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-[280px] p-0">
+        <SheetContent side="left" className="w-[240px] p-0 border-black/5 dark:border-white/5">
           <SidebarContent pathname={pathname} />
         </SheetContent>
       </Sheet>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-60 lg:flex-col">
         <SidebarContent pathname={pathname} />
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-72">
+      <div className="lg:pl-60">
         {/* Top header */}
-        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-black/5 dark:border-white/5 bg-[#FAFAFA]/80 dark:bg-[#0F0F0F]/80 backdrop-blur-sm px-6">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="lg:hidden hover:bg-black/5 dark:hover:bg-white/5"
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Ouvrir le menu</span>
+            <Menu className="h-5 w-5" />
           </Button>
 
-          <Separator orientation="vertical" className="mx-2 h-6" />
-
-          {/* Search bar (optionnel) */}
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="relative flex flex-1 items-center">
-              <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+          {/* Search bar */}
+          <div className="flex flex-1 gap-x-4 self-stretch">
+            <div className="relative flex flex-1 items-center max-w-md">
+              <Search className="absolute left-3 h-4 w-4 text-black/40 dark:text-white/40" />
               <input
                 type="search"
                 placeholder="Rechercher..."
-                className="w-full rounded-[14px] border border-input bg-background pl-9 pr-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 pl-9 pr-4 py-2 text-sm text-black/90 dark:text-white/90 placeholder:text-black/40 dark:placeholder:text-white/40 focus:outline-none focus:border-black/20 dark:focus:border-white/20 transition-all"
               />
             </div>
           </div>
@@ -106,42 +99,33 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Notifications */}
             <NotificationsDropdown />
 
-            {/* New form button */}
-            <Button asChild>
-              <Link href="/dashboard/forms/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Nouveau formulaire
-              </Link>
-            </Button>
-
             {/* User menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full"
+                  className="rounded-full hover:bg-black/5 dark:hover:bg-white/5"
                   suppressHydrationWarning
                 >
                   <User className="h-5 w-5" />
-                  <span className="sr-only">Menu utilisateur</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 border-black/10 dark:border-white/10">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile">
+                  <Link href="/dashboard/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Profil
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">
+                  <Link href="/dashboard/settings" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
                     Paramètres
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
                 <LogoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
@@ -150,8 +134,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Page content */}
         <main className="py-8">
-          <div className="px-4 sm:px-6 lg:px-8">
-            <FadeIn>{children}</FadeIn>
+          <div className="px-6 max-w-7xl mx-auto">
+            {children}
           </div>
         </main>
       </div>
@@ -162,15 +146,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function SidebarContent({ pathname }: { pathname: string }) {
   return (
-    <div className="flex h-full w-full flex-col gap-y-5 border-r bg-background px-6 pb-4">
+    <div className="flex h-full w-full flex-col border-r border-black/5 dark:border-white/5 bg-white dark:bg-[#0F0F0F] px-4 py-6">
       {/* Logo */}
-      <div className="flex h-16 shrink-0 items-center gap-x-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-          <FileText className="h-6 w-6 text-primary-foreground" />
+      <div className="flex items-center gap-2.5 mb-8">
+        <div className="w-8 h-8 bg-gradient-to-br from-[#A78BFA] to-[#EC4899] rounded-xl flex items-center justify-center">
+          <FileText className="h-4 w-4 text-white" />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-foreground">Form Builder</h1>
-          <p className="text-xs text-muted-foreground">SaaS</p>
+          <h1 className="text-base font-semibold text-black/90 dark:text-white/90">Form Builder</h1>
+          <p className="text-xs text-black/50 dark:text-white/50">SaaS</p>
         </div>
       </div>
 
@@ -178,9 +162,6 @@ function SidebarContent({ pathname }: { pathname: string }) {
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-1">
           {navigation.map((item) => {
-            // Amélioration de la logique : pour éviter que /dashboard soit actif sur /dashboard/forms
-            // On vérifie d'abord si c'est un match exact, puis si le pathname commence par l'href + "/"
-            // Mais pour /dashboard, on ne veut l'activer QUE si on est exactement sur /dashboard
             const isExactMatch = pathname === item.href
             const isChildPath = item.href !== "/dashboard" && pathname.startsWith(item.href + "/")
             const isActive = isExactMatch || isChildPath
@@ -191,20 +172,13 @@ function SidebarContent({ pathname }: { pathname: string }) {
                 <Link
                   href={item.href}
                   className={cn(
-                    "group flex gap-x-3 rounded-[14px] px-3 py-2 text-sm font-semibold leading-6 transition-colors",
+                    "group flex gap-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      ? "bg-black/5 dark:bg-white/5 text-black/90 dark:text-white/90"
+                      : "text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black/90 dark:hover:text-white/90"
                   )}
                 >
-                  <Icon
-                    className={cn(
-                      "h-6 w-6 shrink-0",
-                      isActive
-                        ? "text-primary-foreground"
-                        : "text-muted-foreground group-hover:text-foreground"
-                    )}
-                  />
+                  <Icon className="h-5 w-5 shrink-0" />
                   {item.name}
                 </Link>
               </li>
@@ -214,13 +188,11 @@ function SidebarContent({ pathname }: { pathname: string }) {
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto pt-4">
-        <Separator className="mb-4" />
-        <p className="text-xs text-muted-foreground">
+      <div className="mt-auto pt-4 border-t border-black/5 dark:border-white/5">
+        <p className="text-xs text-black/40 dark:text-white/40">
           © 2024 Form Builder
         </p>
       </div>
     </div>
   )
 }
-

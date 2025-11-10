@@ -102,7 +102,7 @@ export function FormBuilderLayout({
           }
         }}
       >
-        <div className="min-h-full p-6 canvas-area">{centerPanel}</div>
+        <div className="min-h-full p-6 pb-24 canvas-area">{centerPanel}</div>
       </main>
 
       {/* Right Panel - Properties */}

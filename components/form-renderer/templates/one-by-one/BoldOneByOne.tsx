@@ -54,6 +54,8 @@ export function BoldOneByOne({
     }
   }
 
+  const isMenuRestaurant = currentBlock?.type === "menu-restaurant"
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50/50 to-cyan-50 flex flex-col relative">
       {/* Motif géométrique subtil */}
@@ -68,6 +70,7 @@ export function BoldOneByOne({
       />
 
       {/* Barre de progression clean */}
+      {!isMenuRestaurant && (
       <div className="relative z-10 bg-white/70 backdrop-blur-md border-b border-teal-200/60 px-8 py-6">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between text-xs font-semibold text-teal-700 mb-3 tracking-wide">
@@ -88,6 +91,7 @@ export function BoldOneByOne({
           </div>
         </div>
       </div>
+      )}
 
       {/* Contenu centré clean */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
@@ -138,8 +142,8 @@ export function BoldOneByOne({
       </div>
 
       {/* Navigation clean */}
-      {currentBlock && !isInWelcomePhase && (
-        <div className="relative z-10 bg-white/70 backdrop-blur-md border-t border-teal-200/60 px-8 py-7">
+      {currentBlock && !isInWelcomePhase && !isMenuRestaurant && (
+        <div className="relative z-10 bg-white/70 backdrop-blur-md border-t border-teal-200/60 px-8 py-7 pb-12">
           <div className="max-w-3xl mx-auto">
             {error && (
               <motion.div
@@ -165,7 +169,14 @@ export function BoldOneByOne({
               )}
               {showNextButton && (
                 <Button
-                  onClick={currentIndex === totalBlocks - 1 ? onSubmit : onNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentIndex === totalBlocks - 1) {
+                      onSubmit();
+                    } else {
+                      onNext();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50 h-11 px-8 rounded-xl font-medium text-base shadow-md shadow-teal-600/20 hover:shadow-lg hover:shadow-teal-600/30 transition-all duration-200"
                 >

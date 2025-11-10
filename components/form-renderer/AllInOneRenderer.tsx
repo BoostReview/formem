@@ -4,6 +4,7 @@ import { useState, useRef, useMemo } from "react";
 import { useFormSubmission } from "@/hooks/useFormSubmission";
 import { ThankYouPage } from "./ThankYouPage";
 import { shouldBlockBeVisible } from "@/lib/form-logic/evaluateVisibility";
+import { validateBlock } from "@/lib/form-validation/validateBlock";
 import type { Form } from "@/types";
 import { MinimalTemplate } from "./templates/MinimalTemplate";
 import { GlassmorphismTemplate } from "./templates/GlassmorphismTemplate";
@@ -49,10 +50,13 @@ export function AllInOneRenderer({ form }: AllInOneRendererProps) {
     const formBlocks = visibleBlocks.filter((b) => b.type !== "welcome");
     const newErrors: Record<string, string> = {};
 
-    // Valider uniquement les blocs visibles
+    // Valider uniquement les blocs visibles avec la fonction de validation complète
     formBlocks.forEach((block) => {
-      if (block.required && !answers[block.id]) {
-        newErrors[block.id] = "Ce champ est requis";
+      const answer = answers[block.id];
+      const validation = validateBlock(block, answer);
+      
+      if (!validation.isValid) {
+        newErrors[block.id] = validation.error || "Ce champ est invalide";
       }
     });
 
@@ -107,6 +111,8 @@ export function AllInOneRenderer({ form }: AllInOneRendererProps) {
     form,
     blocks: visibleBlocks,
     answers,
+    errors,
+    errorRefs,
     onAnswer: handleAnswer,
     onSubmit: handleSubmit,
     isSubmitting,

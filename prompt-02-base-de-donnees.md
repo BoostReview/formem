@@ -252,3 +252,6 @@ Créer `lib/supabase/types.ts` avec les types générés depuis Supabase :
 Un fichier `supabase/schema.sql` complet et fonctionnel, prêt à être exécuté, avec toutes les tables, RLS, et fonctions nécessaires.
 
 
+
+
+

@@ -222,6 +222,7 @@ export async function createForm(data: {
   title: string
   layout: "one" | "page"
   templateId?: string
+  schema?: any[] // Schéma généré par l'IA
 }): Promise<{ success: boolean; formId?: string; error?: string }> {
   try {
     const supabase = await createServerSupabase()
@@ -281,8 +282,8 @@ export async function createForm(data: {
       return { success: false, error: "Profil introuvable" }
     }
 
-    // Charger le template si fourni
-    let initialSchema: any[] = []
+    // Charger le template si fourni, ou utiliser le schéma fourni (IA)
+    let initialSchema: any[] = data.schema || []
     let initialTheme = {
       colors: {
         primary: "#3b82f6",
@@ -297,7 +298,9 @@ export async function createForm(data: {
       radius: 8,
     }
 
-    if (data.templateId) {
+    // Si un schéma est fourni, on l'utilise directement (généré par IA)
+    // Sinon, on charge le template si fourni
+    if (!data.schema && data.templateId) {
       const { getTemplateById } = await import("@/lib/templates")
       const template = getTemplateById(data.templateId)
       if (template && template.layout === data.layout) {

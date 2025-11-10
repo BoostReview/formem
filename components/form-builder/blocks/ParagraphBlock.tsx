@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { FormBlock } from "@/types"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
 interface ParagraphBlockProps {
@@ -15,47 +16,42 @@ export function ParagraphBlock({
   isEditing = false,
   onUpdate,
 }: ParagraphBlockProps) {
-  const [isLocalEditing, setIsLocalEditing] = React.useState(false)
-  const [label, setLabel] = React.useState(block.label || "")
-
-  React.useEffect(() => {
-    setLabel(block.label || "")
-  }, [block.label])
-
-  const handleDoubleClick = () => {
-    if (!isEditing) return
-    setIsLocalEditing(true)
+  const align = (block.align as "left" | "center" | "right") || "left"
+  
+  const alignmentClasses = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
   }
 
-  const handleBlur = () => {
-    setIsLocalEditing(false)
-    if (label !== block.label) {
-      onUpdate?.(label)
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onUpdate?.(e.target.value)
   }
 
   return (
     <div className="w-full">
-      {isLocalEditing ? (
-        <textarea
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          onBlur={handleBlur}
-          className="w-full bg-transparent border-none outline-none text-muted-foreground focus:ring-2 focus:ring-primary rounded px-2 py-1 resize-none"
+      {isEditing ? (
+        <Textarea
+          value={block.label || ""}
+          onChange={handleChange}
+          placeholder="Paragraphe de texte..."
+          className={cn(
+            "bg-transparent border border-dashed border-muted-foreground/40 text-muted-foreground resize-none",
+            alignmentClasses[align]
+          )}
           rows={3}
-          autoFocus
         />
       ) : (
-        <p
-          className="text-muted-foreground"
-          onDoubleClick={handleDoubleClick}
-          style={{ cursor: isEditing ? "text" : "default" }}
-        >
-          {label || "Paragraphe"}
+        <p className={cn(
+          "text-muted-foreground leading-relaxed whitespace-pre-wrap block",
+          alignmentClasses[align]
+        )}>
+          {block.label || "Paragraphe"}
         </p>
       )}
     </div>
   )
 }
+
 
 

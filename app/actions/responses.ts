@@ -1,6 +1,6 @@
 "use server"
 
-import { createServerSupabase } from "@/lib/supabase/server"
+import { createServerSupabase, createServiceRoleSupabase } from "@/lib/supabase/server"
 import { Response } from "@/types"
 
 interface ResponseFilters {
@@ -139,14 +139,100 @@ export async function deleteResponses(
   try {
     const supabase = await createServerSupabase()
 
-    const { error } = await supabase
+    // Vérifier que l'utilisateur est authentifié
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return { success: false, error: "Non authentifié" }
+    }
+
+    // Filtrer les IDs valides (UUIDs)
+    const validIds = responseIds.filter((id) => {
+      // Vérifier que c'est un UUID valide (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      return uuidRegex.test(id)
+    })
+
+    if (validIds.length === 0) {
+      return { success: false, error: "Aucun ID valide à supprimer" }
+    }
+
+    // Récupérer les form_ids des réponses à supprimer pour vérifier les permissions
+    const { data: responses, error: fetchError } = await supabase
+      .from("responses")
+      .select("id, form_id")
+      .in("id", validIds)
+
+    if (fetchError) {
+      return { success: false, error: fetchError.message }
+    }
+
+    if (!responses || responses.length === 0) {
+      return { success: false, error: "Aucune réponse trouvée" }
+    }
+
+    // Récupérer l'org_id de l'utilisateur depuis profiles
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("org_id")
+      .eq("id", user.id)
+      .single()
+
+    if (profileError || !profile?.org_id) {
+      return { success: false, error: "Profil ou organisation introuvable" }
+    }
+
+    // Vérifier que tous les formulaires appartiennent à l'organisation de l'utilisateur
+    const formIds = [...new Set(responses.map((r) => r.form_id))]
+    const { data: forms, error: formsError } = await supabase
+      .from("forms")
+      .select("id")
+      .in("id", formIds)
+      .eq("org_id", profile.org_id)
+
+    if (formsError) {
+      return { success: false, error: formsError.message }
+    }
+
+    if (!forms || forms.length === 0) {
+      return { success: false, error: "Aucun formulaire trouvé avec les permissions nécessaires" }
+    }
+
+    // Vérifier que toutes les réponses appartiennent à des formulaires de l'utilisateur
+    const authorizedFormIds = new Set(forms.map((f) => f.id))
+    const authorizedResponses = responses.filter((r) => authorizedFormIds.has(r.form_id))
+    
+    if (authorizedResponses.length === 0) {
+      return { success: false, error: "Aucune réponse n'appartient à vos formulaires" }
+    }
+
+    const authorizedIds = authorizedResponses.map((r) => r.id)
+
+    // Utiliser le service role pour contourner RLS si nécessaire
+    // Mais on a déjà vérifié toutes les permissions manuellement
+    const serviceSupabase = createServiceRoleSupabase()
+    
+    // Supprimer uniquement les réponses autorisées
+    const { error: deleteError, data: deletedData } = await serviceSupabase
       .from("responses")
       .delete()
-      .in("id", responseIds)
+      .in("id", authorizedIds)
+      .select()
 
-    if (error) {
-      return { success: false, error: error.message }
+    if (deleteError) {
+      console.error("Erreur Supabase lors de la suppression:", deleteError)
+      return { success: false, error: deleteError.message }
     }
+
+    const deletedCount = deletedData?.length || 0
+
+    if (deletedCount === 0) {
+      return { 
+        success: false, 
+        error: "Aucune réponse n'a pu être supprimée." 
+      }
+    }
+
+    console.log(`Suppression réussie: ${deletedCount} réponse(s) supprimée(s) sur ${validIds.length} demandée(s)`)
 
     return { success: true }
   } catch (error) {
@@ -157,5 +243,6 @@ export async function deleteResponses(
     }
   }
 }
+
 
 

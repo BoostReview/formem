@@ -66,6 +66,10 @@ export function formatAnswers(
       case "consent":
         formatted[block.label || block.id] = value ? "Accepté" : "Non accepté"
         break
+      case "captcha":
+        // Pour le CAPTCHA, on affiche simplement "Validé" au lieu du token brut
+        formatted[block.label || block.id] = value && String(value).trim() !== "" ? "Validé" : "Non validé"
+        break
       case "date":
         if (typeof value === "string") {
           try {
@@ -73,6 +77,14 @@ export function formatAnswers(
           } catch {
             formatted[block.label || block.id] = String(value)
           }
+        } else {
+          formatted[block.label || block.id] = String(value)
+        }
+        break
+      case "file":
+        if (value && typeof value === "object" && "originalName" in value) {
+          const fileData = value as { originalName: string; fileUrl?: string; fileName?: string }
+          formatted[block.label || block.id] = `FILE:${JSON.stringify(fileData)}`
         } else {
           formatted[block.label || block.id] = String(value)
         }
@@ -93,7 +105,22 @@ export function getAnswersPreview(
   const formatted = formatAnswers(answers, schema)
   const entries = Object.entries(formatted)
     .filter(([_, value]) => value !== "-")
-    .map(([key, value]) => `${key}: ${value}`)
+    .map(([key, value]) => {
+      // Si c'est un fichier, afficher juste le nom
+      if (typeof value === "string" && value.startsWith("FILE:")) {
+        try {
+          const fileData = JSON.parse(value.substring(5))
+          return `${key}: ${fileData.originalName || fileData.fileName || "Fichier"}`
+        } catch {
+          return `${key}: Fichier`
+        }
+      }
+      // Pour le CAPTCHA, ne pas afficher le token dans le preview
+      if (key.toLowerCase().includes("captcha") || key.toLowerCase().includes("vérification")) {
+        return `${key}: Validé`
+      }
+      return `${key}: ${value}`
+    })
     .join(", ")
 
   if (entries.length > maxLength) {
@@ -102,5 +129,6 @@ export function getAnswersPreview(
 
   return entries || "Aucune réponse"
 }
+
 
 

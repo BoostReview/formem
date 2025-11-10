@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { FormRenderer } from "@/components/form-renderer/FormRenderer";
 import type { Form } from "@/types";
@@ -51,6 +52,103 @@ async function checkFormLimits(form: Form): Promise<{ valid: boolean; reason?: s
   }
 
   return { valid: true };
+}
+
+// Fonction pour extraire la description depuis les blocs welcome
+function getFormDescription(form: Form): string {
+  const schema = Array.isArray(form.schema_json) ? form.schema_json : [];
+  const welcomeBlock = schema.find((block: any) => block.type === "welcome");
+  
+  if (welcomeBlock?.description) {
+    return welcomeBlock.description as string;
+  }
+  
+  if (welcomeBlock?.label) {
+    return welcomeBlock.label as string;
+  }
+  
+  // Essayer de trouver un bloc heading ou paragraph
+  const headingBlock = schema.find((block: any) => block.type === "heading");
+  if (headingBlock?.label) {
+    return headingBlock.label as string;
+  }
+  
+  const paragraphBlock = schema.find((block: any) => block.type === "paragraph");
+  if (paragraphBlock?.label) {
+    return paragraphBlock.label as string;
+  }
+  
+  return `Formulaire: ${form.title}`;
+}
+
+// Générer les meta tags pour le SEO et le partage social
+export async function generateMetadata({ params }: PublicFormPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const form = await getFormBySlug(slug);
+  
+  if (!form) {
+    return {
+      title: "Formulaire introuvable",
+      description: "Le formulaire que vous recherchez n'existe pas ou n'est plus disponible.",
+    };
+  }
+  
+  const title = form.title || "Formulaire";
+  const description = getFormDescription(form);
+  
+  // Construire l'URL du site
+  let siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) {
+    // En production Vercel, utiliser VERCEL_URL
+    if (process.env.VERCEL_URL) {
+      siteUrl = `https://${process.env.VERCEL_URL}`;
+    } else {
+      // Fallback pour le développement
+      siteUrl = "http://localhost:3000";
+    }
+  }
+  const formUrl = `${siteUrl}/f/${slug}`;
+  
+  // Essayer de trouver une image dans le formulaire
+  const schema = Array.isArray(form.schema_json) ? form.schema_json : [];
+  const imageBlock = schema.find((block: any) => block.type === "image" && block.imageUrl);
+  const ogImage = imageBlock?.imageUrl 
+    ? (imageBlock.imageUrl as string)
+    : `${siteUrl}/og-image.png`; // Image par défaut si disponible
+  
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      url: formUrl,
+      siteName: "FormBuilder",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: "fr_FR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+      images: [ogImage],
+    },
+    alternates: {
+      canonical: formUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 export default async function PublicFormPage({ params }: PublicFormPageProps) {

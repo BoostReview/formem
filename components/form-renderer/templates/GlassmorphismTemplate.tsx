@@ -25,6 +25,12 @@ export function GlassmorphismTemplate({
 }: GlassmorphismTemplateProps) {
   const welcomeBlocks = blocks.filter((b) => b.type === "welcome")
   const formBlocks = blocks.filter((b) => b.type !== "welcome")
+  
+  // Vérifier si tous les blocs sont des blocs informatifs (menu-restaurant, heading, paragraph, etc.)
+  const hasOnlyInformationalBlocks = formBlocks.length > 0 && 
+    formBlocks.every(block => 
+      ["menu-restaurant", "heading", "paragraph", "youtube"].includes(block.type)
+    )
 
   return (
     <div 
@@ -63,8 +69,8 @@ export function GlassmorphismTemplate({
         />
       </div>
 
-      <div className="relative z-10 py-16 px-4">
-        <div className="max-w-2xl mx-auto space-y-8">
+      <div className="relative z-10 py-8 sm:py-16 px-3 sm:px-4">
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-8">
           {/* Blocs welcome - Effet glassmorphism */}
           {welcomeBlocks.map((block, index) => (
             <motion.div
@@ -74,7 +80,7 @@ export function GlassmorphismTemplate({
               transition={{ delay: index * 0.2, type: "spring", stiffness: 100 }}
             >
               <div
-                className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-3xl p-8 shadow-2xl"
+                className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl"
                 style={{
                   boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
                 }}
@@ -99,7 +105,7 @@ export function GlassmorphismTemplate({
               }}
             >
               <div
-                className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-3xl p-8 shadow-2xl hover:bg-white/25 transition-all duration-300"
+                className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl hover:bg-white/25 transition-all duration-300"
                 style={{
                   boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
                 }}
@@ -112,6 +118,7 @@ export function GlassmorphismTemplate({
           ))}
 
           {/* Bouton - Style glassmorphism */}
+          {!hasOnlyInformationalBlocks && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,9 +134,11 @@ export function GlassmorphismTemplate({
               {isSubmitting ? "Envoi en cours..." : "Envoyer le formulaire"}
             </Button>
           </motion.div>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 

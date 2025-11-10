@@ -69,3 +69,6 @@ export function useFriendlyCaptcha(
   return { solution, isReady, error, reset };
 }
 
+
+
+

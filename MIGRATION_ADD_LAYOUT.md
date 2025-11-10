@@ -90,3 +90,6 @@ DROP TABLE IF EXISTS orgs CASCADE;
 2. Puis exécutez tout le contenu de `supabase/schema.sql`
 
 
+
+
+

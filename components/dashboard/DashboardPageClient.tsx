@@ -58,7 +58,6 @@ export function DashboardPageClient({
         title: "Formulaire dupliqué",
         description: "Le formulaire a été dupliqué avec succès.",
       })
-      // Recharger les données
       const formsResult = await getForms()
       if (formsResult.success && formsResult.forms) {
         setForms(formsResult.forms)
@@ -83,7 +82,6 @@ export function DashboardPageClient({
         title: "Formulaire supprimé",
         description: "Le formulaire a été supprimé avec succès.",
       })
-      // Recharger les données
       const formsResult = await getForms()
       if (formsResult.success && formsResult.forms) {
         setForms(formsResult.forms)
@@ -98,16 +96,18 @@ export function DashboardPageClient({
   }
 
   return (
-    <div className="space-y-8">
-      {/* En-tête */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 pb-12">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Vue d'ensemble de vos formulaires
+          <h1 className="text-3xl font-bold text-black/90 dark:text-white/90 mb-1">
+            Dashboard
+          </h1>
+          <p className="text-sm text-black/60 dark:text-white/60">
+            Vue d'ensemble de vos formulaires et statistiques
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90">
           <Link href="/dashboard/forms/new">
             <Plus className="h-4 w-4 mr-2" />
             Nouveau formulaire
@@ -115,35 +115,42 @@ export function DashboardPageClient({
         </Button>
       </div>
 
-      {/* Statistiques */}
+      {/* Stats */}
       <StatsGrid
         totalForms={stats.totalForms}
         totalResponses={stats.totalResponses}
         activeForms={stats.activeForms}
       />
 
-      {/* Formulaires récents */}
+      {/* Recent forms */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Formulaires récents</h2>
+          <div>
+            <h2 className="text-xl font-semibold text-black/90 dark:text-white/90">Formulaires récents</h2>
+            <p className="text-sm text-black/60 dark:text-white/60 mt-1">
+              Vos derniers formulaires créés
+            </p>
+          </div>
           {forms.length > 5 && (
-            <Button variant="ghost" asChild>
-              <Link href="/dashboard/forms">
-                Voir tous les formulaires
-                <ArrowRight className="h-4 w-4 ml-2" />
+            <Button variant="ghost" asChild className="text-black/60 dark:text-white/60 hover:text-black/90 dark:hover:text-white/90">
+              <Link href="/dashboard/forms" className="group">
+                Voir tout
+                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
           )}
         </div>
 
         {recentForms.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 border border-dashed rounded-[14px]">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucun formulaire</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Créez votre premier formulaire pour commencer
+          <div className="flex flex-col items-center justify-center py-16 px-6 border border-dashed border-black/10 dark:border-white/10 rounded-xl bg-white dark:bg-white/5">
+            <div className="rounded-full bg-black/5 dark:bg-white/5 p-4 mb-4">
+              <FileText className="h-8 w-8 text-black/40 dark:text-white/40" />
+            </div>
+            <h3 className="text-lg font-semibold text-black/90 dark:text-white/90 mb-2">Aucun formulaire</h3>
+            <p className="text-sm text-black/60 dark:text-white/60 mb-6 text-center max-w-sm">
+              Créez votre premier formulaire pour commencer à collecter des réponses
             </p>
-            <Button asChild>
+            <Button asChild className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90">
               <Link href="/dashboard/forms/new">
                 <Plus className="h-4 w-4 mr-2" />
                 Créer un formulaire
@@ -163,33 +170,8 @@ export function DashboardPageClient({
           />
         )}
       </div>
-
-      {/* Actions rapides */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="p-6 border rounded-[14px] bg-card">
-          <h3 className="font-semibold mb-2">Créer un formulaire</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Commencez à collecter des réponses en créant un nouveau formulaire
-          </p>
-          <Button asChild>
-            <Link href="/dashboard/forms/new">
-              Créer un formulaire
-            </Link>
-          </Button>
-        </div>
-        <div className="p-6 border rounded-[14px] bg-card">
-          <h3 className="font-semibold mb-2">Voir tous les formulaires</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Accédez à tous vos formulaires et gérez-les en un seul endroit
-          </p>
-          <Button variant="outline" asChild>
-            <Link href="/dashboard/forms">
-              Voir tous les formulaires
-            </Link>
-          </Button>
-        </div>
-      </div>
     </div>
   )
 }
+
 

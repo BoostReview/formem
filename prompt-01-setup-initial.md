@@ -133,3 +133,6 @@ Créer `types/index.ts` avec :
 Un projet Next.js fonctionnel avec toute la structure de base, prêt à accueillir les autres modules.
 
 
+
+
+

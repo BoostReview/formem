@@ -15,6 +15,41 @@ import { getRecentResponses } from "@/app/actions/notifications"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 
+const STORAGE_KEY = "notifications_read"
+
+// Fonction utilitaire pour récupérer les IDs des notifications lues
+function getReadNotificationIds(): Set<string> {
+  if (typeof window === "undefined") return new Set()
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return new Set()
+    const ids = JSON.parse(stored) as string[]
+    return new Set(ids)
+  } catch {
+    return new Set()
+  }
+}
+
+// Fonction utilitaire pour marquer des notifications comme lues
+function markNotificationsAsRead(ids: string[]): void {
+  if (typeof window === "undefined") return
+  try {
+    const readIds = getReadNotificationIds()
+    ids.forEach((id) => readIds.add(id))
+    // Nettoyer les anciennes notifications (plus de 7 jours) pour éviter que localStorage ne devienne trop volumineux
+    // On garde seulement les IDs récents (on ne peut pas vérifier la date ici, mais on limite à 1000 IDs max)
+    const idsArray = Array.from(readIds)
+    if (idsArray.length > 1000) {
+      // Garder seulement les 1000 plus récents
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(idsArray.slice(-1000)))
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(idsArray))
+    }
+  } catch {
+    // Ignorer les erreurs de localStorage
+  }
+}
+
 export function NotificationsDropdown() {
   const [mounted, setMounted] = React.useState(false)
   const [open, setOpen] = React.useState(false)
@@ -33,18 +68,53 @@ export function NotificationsDropdown() {
     setMounted(true)
   }, [])
 
+  // Fonction pour charger uniquement le compteur (sans les détails)
+  const loadUnreadCount = React.useCallback(async () => {
+    try {
+      const result = await getRecentResponses(10)
+      if (result.success && result.responses) {
+        const readIds = getReadNotificationIds()
+        // Compter les notifications non lues (dernières 24h et non lues)
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+        const recent = result.responses.filter(
+          (r) => new Date(r.created_at) > oneDayAgo && !readIds.has(r.id)
+        )
+        setUnreadCount(recent.length)
+      }
+    } catch (error) {
+      console.error("Erreur chargement compteur notifications:", error)
+    }
+  }, [])
+
   const loadNotifications = React.useCallback(async () => {
     setIsLoading(true)
     try {
       const result = await getRecentResponses(10)
       if (result.success && result.responses) {
         setResponses(result.responses)
-        // Compter les notifications non lues (dernières 24h)
+        
+        // Marquer toutes les notifications récentes comme lues quand on ouvre le popover
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
-        const recent = result.responses.filter(
-          (r) => new Date(r.created_at) > oneDayAgo
-        )
-        setUnreadCount(recent.length)
+        const recentIds = result.responses
+          .filter((r) => new Date(r.created_at) > oneDayAgo)
+          .map((r) => r.id)
+        
+        if (recentIds.length > 0) {
+          markNotificationsAsRead(recentIds)
+          // Mettre à jour le compteur immédiatement (synchrone) après avoir marqué comme lues
+          const readIds = getReadNotificationIds()
+          const unread = result.responses.filter(
+            (r) => new Date(r.created_at) > oneDayAgo && !readIds.has(r.id)
+          )
+          setUnreadCount(unread.length)
+        } else {
+          // Pas de nouvelles notifications, mais on recalcule quand même au cas où
+          const readIds = getReadNotificationIds()
+          const unread = result.responses.filter(
+            (r) => new Date(r.created_at) > oneDayAgo && !readIds.has(r.id)
+          )
+          setUnreadCount(unread.length)
+        }
       }
     } catch (error) {
       console.error("Erreur chargement notifications:", error)
@@ -53,11 +123,29 @@ export function NotificationsDropdown() {
     }
   }, [])
 
+  // Charger le compteur au montage et périodiquement en arrière-plan
+  React.useEffect(() => {
+    if (!mounted) return
+    
+    // Charger immédiatement
+    loadUnreadCount()
+    
+    // Recharger toutes les 30 secondes en arrière-plan
+    const interval = setInterval(() => {
+      loadUnreadCount()
+    }, 30000) // 30 secondes
+
+    return () => clearInterval(interval)
+  }, [mounted, loadUnreadCount])
+
+  // Charger les détails complets quand le popover s'ouvre
   React.useEffect(() => {
     if (open) {
       loadNotifications()
+      // Mettre à jour le compteur immédiatement quand on ouvre
+      loadUnreadCount()
     }
-  }, [open, loadNotifications])
+  }, [open, loadNotifications, loadUnreadCount])
 
   // Recharger périodiquement quand ouvert
   React.useEffect(() => {
@@ -105,7 +193,9 @@ export function NotificationsDropdown() {
         <Button variant="ghost" size="icon" className="relative" suppressHydrationWarning>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
+            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center border-2 border-background">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
           )}
           <span className="sr-only">Notifications</span>
         </Button>
